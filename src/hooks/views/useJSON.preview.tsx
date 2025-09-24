@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 
 export function useJSONPreview({ data }: { data: unknown }) {
