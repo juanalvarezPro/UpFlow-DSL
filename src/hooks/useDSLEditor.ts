@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { parse, SyntaxError } from '@/lib/parser';
+import { DEFAULT_DSL } from '@/constants/defaultDSL';
 
 interface ParseResult {
   success: boolean;
@@ -32,28 +33,10 @@ interface ParseResult {
   };
 }
 
-const DEFAULT_DSL = `Pantalla CITA:
-Agenda una cita en nuestra clínica
-Opciones:
-1. Consulta General
-2. Consulta Especializada
-3. Examen de Laboratorio
-4. Control de Salud Preventivo
-
-Pantalla DETALLES:
-Completa tu información personal
-Opciones:
-1. Continuar
-2. Volver
-
-Pantalla CONFIRMACION:
-¿Confirmas tu cita?
-Opciones:
-1. Confirmar
-2. Rechazar`;
+const DEFAULT_DSL_VALUE = DEFAULT_DSL;
 
 export function useDSLEditor() {
-  const [dslValue, setDSLValue] = useState(DEFAULT_DSL);
+  const [dslValue, setDSLValue] = useState(DEFAULT_DSL_VALUE);
 
   const parseResult = useMemo((): ParseResult => {
     if (!dslValue.trim()) {
@@ -72,7 +55,7 @@ export function useDSLEditor() {
     try {
       // Detectar si hay múltiples pantallas
       const screenCount = (dslValue.match(/Pantalla\s+\w+:/g) || []).length;
-      
+
       let result;
       if (screenCount > 1) {
         // Si hay múltiples pantallas, usar la regla Flow
@@ -81,7 +64,7 @@ export function useDSLEditor() {
         // Si hay una sola pantalla, usar SingleScreen
         result = parse(dslValue, { startRule: 'SingleScreen' }) as ParseResult['data'];
       }
-      
+
       return {
         success: true,
         data: result
