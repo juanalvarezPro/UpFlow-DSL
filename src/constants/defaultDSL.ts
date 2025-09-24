@@ -1,4 +1,4 @@
-import { Keywords } from "@/enums/keywords";
+import { Keywords } from "@/enums/keyWords";
 
 export const DEFAULT_DSL = `${Keywords.Pantalla} CITA:
 Agenda una cita en nuestra clínica
