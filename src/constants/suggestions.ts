@@ -1,8 +1,7 @@
-import { Keywords } from "@/enums/keywords";
-import * as monaco from "monaco-editor";
-import { Range } from "monaco-editor";
+import { Keywords } from "@/enums/keyWords";
+import type * as monaco from 'monaco-editor';
 
-export function suggestions({ range }: { range: Range }) {
+export function suggestions({ range, monaco }: { range: monaco.Range; monaco: typeof import('monaco-editor') }) {
   return [
     {
       label: Keywords.Pantalla,

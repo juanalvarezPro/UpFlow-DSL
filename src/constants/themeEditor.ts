@@ -1,7 +1,7 @@
 import type * as monaco from 'monaco-editor';
 
-export const themeEditor: monaco.editor.IStandaloneThemeData = {
-    base: 'vs-dark' as monaco.editor.IStandaloneThemeData['base'],
+export const themeEditor: monaco.editor.IStandaloneThemeData  = {
+    base: 'vs-dark',
     inherit: true,
     rules: [
         { token: 'keyword', foreground: '60a5fa', fontStyle: 'bold' },
