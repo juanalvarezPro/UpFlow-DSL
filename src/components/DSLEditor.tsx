@@ -24,67 +24,121 @@ export function DSLEditor({ value, onChange, error, onFormat }: DSLEditorProps) 
   const { handleEditorDidMount, handleFormat } = useDSLEditorView({ onFormat: onFormat || (() => { }) });
 
   return (
-    <div className="h-full flex flex-col bg-slate-900 border border-slate-700  shadow-lg overflow-hidden">
-    {/* Header */}
-    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-800/50">
-      <div className="flex items-center gap-3">
-        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-        <h2 className="text-sm font-medium text-slate-200">Editor DSL</h2>
+    <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-blue-500/20 glass-subtle flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50"></div>
+          <h2 className="text-sm font-semibold text-slate-200">Editor DSL</h2>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleFormat}
+          className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+        >
+          <RefreshCw className="h-4 w-4" />
+          <span className="text-sm font-medium">Formatear</span>
+        </Button>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleFormat}
-        className="flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700"
-      >
-        <RefreshCw className="h-4 w-4" />
-        <span className="text-sm">Formatear</span>
-      </Button>
-    </div>
 
-    {/* Editor */}
-    <div className="flex-1 relative overflow-hidden">
-      <MonacoEditor
-        height="100%"
-        language="flows-dsl"
-        value={value}
-        onChange={(newValue) => onChange(newValue || '')}
-        onMount={handleEditorDidMount}
-        options={{
-          minimap: { enabled: false },
-          fontSize: 15,
-          lineNumbers: 'on',
-          wordWrap: 'on',
-          automaticLayout: true,
-          fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-          lineHeight: 1.6,
-          padding: { top: 16, bottom: 16 },
-          cursorStyle: 'line',
-          renderLineHighlight: 'line',
-          mouseWheelZoom: true,
-          scrollbar: {
-            verticalScrollbarSize: 8,
-            horizontalScrollbarSize: 8,
-          },
-        }}
-      />
-    </div>
+      {/* Editor */}
+      <div className="flex-1 min-h-0 relative">
+        <MonacoEditor
+          height="100%"
+          language="flows-dsl"
+          value={value}
+          onChange={(newValue) => onChange(newValue || '')}
+          onMount={(editor, monaco) => {
+            // Configurar tema personalizado más cómodo
+            monaco.editor.defineTheme('upflows-dark', {
+              base: 'vs-dark',
+              inherit: true,
+              rules: [
+                { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+                { token: 'keyword', foreground: '569CD6', fontStyle: 'bold' },
+                { token: 'string', foreground: 'CE9178' },
+                { token: 'number', foreground: 'B5CEA8' },
+                { token: 'operator', foreground: 'D4D4D4' },
+                { token: 'delimiter', foreground: 'D4D4D4' },
+                { token: 'identifier', foreground: '9CDCFE' },
+                { token: 'type', foreground: '4EC9B0' },
+                { token: 'function', foreground: 'DCDCAA' },
+                { token: 'variable', foreground: '9CDCFE' },
+                { token: 'constant', foreground: '4FC1FF' },
+                { token: 'property', foreground: '9CDCFE' },
+                { token: 'punctuation', foreground: 'D4D4D4' },
+              ],
+              colors: {
+                'editor.background': '#0F172A',
+                'editor.foreground': '#E2E8F0',
+                'editor.lineHighlightBackground': '#1E293B40',
+                'editor.selectionBackground': '#3B82F640',
+                'editor.inactiveSelectionBackground': '#3B82F620',
+                'editorCursor.foreground': '#3B82F6',
+                'editor.lineHighlightBorder': '#1E293B60',
+                'editorLineNumber.foreground': '#64748B',
+                'editorLineNumber.activeForeground': '#94A3B8',
+                'editorIndentGuide.background': '#1E293B40',
+                'editorIndentGuide.activeBackground': '#3B82F640',
+                'editorBracketMatch.background': '#3B82F620',
+                'editorBracketMatch.border': '#3B82F6',
+                'scrollbarSlider.background': '#3B82F630',
+                'scrollbarSlider.hoverBackground': '#3B82F650',
+                'scrollbarSlider.activeBackground': '#3B82F670',
+              }
+            });
+            
+            editor.updateOptions({
+              theme: 'upflows-dark'
+            });
+            
+            handleEditorDidMount(editor, monaco);
+          }}
+          options={{
+            minimap: { enabled: false },
+            fontSize: 15,
+            lineNumbers: 'on',
+            wordWrap: 'on',
+            automaticLayout: true,
+            fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
+            lineHeight: 1.6,
+            padding: { top: 20, bottom: 20 },
+            cursorStyle: 'line',
+            renderLineHighlight: 'line',
+            mouseWheelZoom: true,
+            scrollbar: {
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+            },
+            bracketPairColorization: { enabled: true },
+            guides: {
+              bracketPairs: true,
+              indentation: true,
+            },
+            suggest: {
+              showKeywords: true,
+              showSnippets: true,
+            },
+          }}
+        />
+      </div>
 
-    {/* Error */}
-    {error && (
-      <div className="px-6 py-3 bg-red-900/20 border-t border-red-800">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
-          <div className="space-y-1">
-            <div className="text-sm font-medium text-red-300">Error de sintaxis</div>
-            <div className="text-sm text-red-200">{error.message}</div>
-            <div className="text-xs text-red-400">
-              Línea {error.location.start.line}, columna {error.location.start.column}
+      {/* Error */}
+      {error && (
+        <div className="px-6 py-4 bg-red-950/30 border-t border-red-500/20 glass-subtle flex-shrink-0">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="space-y-1 min-w-0">
+              <div className="text-sm font-medium text-red-300">Error de sintaxis</div>
+              <div className="text-sm text-red-200 break-words">{error.message}</div>
+              <div className="text-xs text-red-400">
+                Línea {error.location.start.line}, columna {error.location.start.column}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
+      )}
+    </div>
   );
 }
