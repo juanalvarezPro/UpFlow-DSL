@@ -1,7 +1,7 @@
 'use client';
 
 import { useJSONPreview } from '@/hooks/views/useJSON.preview';
-import { CopyButton } from './ui/copyButton';
+import { CopyButton } from './ui/CopyButton';
 
 interface JSONPreviewProps {
   data: unknown;
