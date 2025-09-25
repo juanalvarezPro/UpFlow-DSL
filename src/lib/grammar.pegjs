@@ -13,16 +13,40 @@
     return text;
   }
 
+  function extractNavigationScreen(text) {
+    // Buscar patrón "Ir a pantalla [Nombre]"
+    const match = text.match(/Ir a pantalla\s+(.+)/i);
+    if (match) {
+      return makeScreenId(match[1].trim());
+    }
+    return null;
+  }
+
   // Variables globales para tracking de IDs únicos
   var usedScreenIds = new Set();
   var usedListNames = new Set();
+  var referencedScreens = new Set();
 }
 
 Flow
   = _ screens:Screen+ _ {
+      // Validar que todas las pantallas referenciadas existan
+      const existingScreenIds = new Set(screens.map(s => s.id));
+      for (const referencedScreen of referencedScreens) {
+        if (!existingScreenIds.has(referencedScreen)) {
+          error("Error: La pantalla '" + referencedScreen + "' es referenciada pero no existe. Debe crear esta pantalla en el flujo.");
+        }
+      }
       return { version: "6.0", screens };
     }
   / _ screen:Screen _ {
+      // Validar que todas las pantallas referenciadas existan
+      const existingScreenIds = new Set([screen.id]);
+      for (const referencedScreen of referencedScreens) {
+        if (!existingScreenIds.has(referencedScreen)) {
+          error("Error: La pantalla '" + referencedScreen + "' es referenciada pero no existe. Debe crear esta pantalla en el flujo.");
+        }
+      }
       return { version: "6.0", screens: [screen] };
     }
 
@@ -48,6 +72,16 @@ Screen
 
       const dropdowns = content.filter(c => c.type === "Dropdown");
       const texts = content.filter(c => c.type === "TextParagraph");
+      
+      // Buscar texto de navegación en los textos
+      let nextScreenName = null;
+      for (const text of texts) {
+        const extractedScreen = extractNavigationScreen(text.text);
+        if (extractedScreen) {
+          nextScreenName = extractedScreen;
+          break;
+        }
+      }
 
       // --- Sección DATA ---
       const data = {};
@@ -87,18 +121,33 @@ Screen
         "data-source": "${data." + d.name + "}"
       }));
 
-      // Footer automático
-      formChildren.push({
-        type: "Footer",
-        label: "Continuar",
-        "on-click-action": {
-          name: "navigate",
-          next: { type: "screen", name: "DETALLES" },
-          payload: Object.fromEntries(
-            dropdowns.map(d => [d.name, "${form." + d.name + "}"])
-          )
-        }
-      });
+      // Footer automático solo si hay navegación
+      if (nextScreenName) {
+        referencedScreens.add(nextScreenName);
+        formChildren.push({
+          type: "Footer",
+          label: "Continuar",
+          "on-click-action": {
+            name: "navigate",
+            next: { type: "screen", name: nextScreenName },
+            payload: Object.fromEntries(
+              dropdowns.map(d => [d.name, "${form." + d.name + "}"])
+            )
+          }
+        });
+      }
+
+      // Construir children del layout
+      const layoutChildren = [...texts.map(t => ({ type: "TextBody", text: t.text }))];
+      
+      // Solo agregar Form si hay dropdowns o navegación
+      if (dropdowns.length > 0 || nextScreenName) {
+        layoutChildren.push({
+          type: "Form",
+          name: "form_agendamiento",
+          children: formChildren
+        });
+      }
 
       return {
         id: screenId,
@@ -106,14 +155,7 @@ Screen
         data,
         layout: {
           type: "SingleColumnLayout",
-          children: [
-            ...texts.map(t => ({ type: "TextBody", text: t.text })),
-            {
-              type: "Form",
-              name: "form_agendamiento",
-              children: formChildren
-            }
-          ]
+          children: layoutChildren
         }
       };
     }
@@ -135,10 +177,6 @@ InvalidKeywordLine
   / "Opcion" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Optional" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Opciones" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
-  // Detectar patrones similares a "Pantalla" (falta una 'l')
-  / "Panta" [a-z]* [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Pantalla'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
-  // Detectar patrones similares a "Lista" (variaciones comunes)
-  / "Lis" [a-z]* [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Lista'. Ejemplo: 'Lista Mi Lista:'"); }
 
 Text
   = line:TextLine __ {
