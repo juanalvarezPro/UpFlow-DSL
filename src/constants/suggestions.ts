@@ -14,12 +14,40 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       sortText: "1",
     },
     {
+      label: Keywords.Required,
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: Keywords.Required,
+      insertTextRules:
+        monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: "create a new required field",
+      range,
+      sortText: "2",
+    },
+    {
+      label: Keywords.Lista,
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: Keywords.Lista + " ${1:nombre} Requerido:",
+      insertTextRules:
+        monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: "create a new lista field",
+      range,
+      sortText: "3",
+    },
+    {
+      label: Keywords.Habilitado,
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: Keywords.Habilitado + ": ",
+      documentation: "create a new habilitado field",
+      range,
+      sortText: "4",
+    },
+    {
       label: Keywords.Mostramos,
       kind: monaco.languages.CompletionItemKind.Keyword,
       insertText: Keywords.Mostramos + ": ",
       documentation: "show text to the user",
       range,
-      sortText: "2",
+      sortText: "3",
     },
     {
       label: Keywords.Opciones,
@@ -29,7 +57,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "start a numbered list of options with Cancelar included",
       range,
-      sortText: "3",
+      sortText: "4",
     },
     {
       label: Keywords.SiEliges,
@@ -43,7 +71,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "define a conditional flow",
       range,
-      sortText: "4",
+      sortText: "5",
     },
     {
       label: Keywords.IrAPantalla,
@@ -53,7 +81,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "navigate to another screen",
       range,
-      sortText: "5",
+      sortText: "6",
     },
     {
       label: Keywords.Salir,
@@ -61,7 +89,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Salir,
       documentation: "Termina el flujo and exit the bot",
       range,
-      sortText: "6",
+      sortText: "7",
     },
     {
       label: Keywords.Cancelar,
@@ -69,7 +97,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Cancelar,
       documentation: "Cancela la operación actual",
       range,
-      sortText: "7",
+      sortText: "8",
     },
     {
       label: Keywords.Sí,
@@ -77,7 +105,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Sí,
       documentation: "positive confirmation option",
       range,
-      sortText: "8",
+      sortText: "9",
     },
     {
       label: Keywords.No,
@@ -85,7 +113,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.No,
       documentation: "option of negative confirmation",
       range,
-      sortText: "9",
+      sortText: "10",
     },
     {
       label: Keywords.Imagen,
@@ -95,7 +123,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "Insert a image",
       range,
-      sortText: "10",
+      sortText: "11",
     },
     {
       label: Keywords.Formulario,
@@ -109,7 +137,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "Create a form with fields",
       range,
-      sortText: "11",
+      sortText: "12",
     },
   ];
 }

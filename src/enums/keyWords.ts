@@ -1,7 +1,9 @@
 export enum Keywords {
     Pantalla = 'Pantalla',
+    Required = 'Requerido',
     Mostramos = 'Mostramos',
     Opciones = 'Opciones',
+    Lista = 'Lista',
     SiEliges = 'Si eliges',
     IrAPantalla = 'Ir a pantalla',
     Salir = 'Salir',
@@ -10,4 +12,5 @@ export enum Keywords {
     No = 'No',
     Imagen = 'Imagen',
     Formulario = '[FORMULARIO]',
+    Habilitado = 'habilitado',
 }
