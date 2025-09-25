@@ -1,6 +1,7 @@
 export const DEFAULT_DSL = `// Ejemplo: Flow de citas de un hospital
 // Screen Cita
 Pantalla CITA:
+Titulo: Este es el titulo de cita
 
 Lista tipo cita:
 1. general - Consulta General

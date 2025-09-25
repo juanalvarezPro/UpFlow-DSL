@@ -14,6 +14,7 @@ const noRegex = new RegExp(`\\b${Keywords.No}\\b`);
 const imagenRegex = new RegExp(`\\b${Keywords.Imagen}\\b`);
 const formularioRegex = new RegExp(Keywords.Formulario.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 const opcionalRegex = new RegExp(`\\b${Keywords.Opcional}\\b`);
+const tituloRegex = new RegExp(`\\b${Keywords.Titulo}\\b`);
 
 
 export const tokensEditor = {
@@ -21,6 +22,7 @@ export const tokensEditor = {
         root: [
             [/\/\/.*$/, 'comment'], // Comentarios de línea
             [pantallaRegex, 'keyword'],
+            [tituloRegex, 'keyword'],
             [mostramosRegex, 'keyword'],
             [listaRegex, 'keyword'],
             [siEligesRegex, 'keyword'],

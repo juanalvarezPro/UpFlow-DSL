@@ -37,7 +37,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Mostramos + ": ",
       documentation: "show text to the user",
       range,
-      sortText: "3",
+      sortText: "4",
     },
     {
       label: Keywords.SiEliges,
@@ -51,7 +51,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "define a conditional flow",
       range,
-      sortText: "6",
+      sortText: "5",
     },
     {
       label: Keywords.IrAPantalla,
@@ -61,7 +61,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "navigate to another screen",
       range,
-      sortText: "7",
+      sortText: "6",
     },
     {
       label: Keywords.Salir,
@@ -69,7 +69,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Salir,
       documentation: "Termina el flujo and exit the bot",
       range,
-      sortText: "8",
+      sortText: "7",
     },
     {
       label: Keywords.Cancelar,
@@ -77,7 +77,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Cancelar,
       documentation: "Cancela la operación actual",
       range,
-      sortText: "9",
+      sortText: "8",
     },
     {
       label: Keywords.Sí,
@@ -85,7 +85,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.Sí,
       documentation: "positive confirmation option",
       range,
-      sortText: "10",
+      sortText: "9",
     },
     {
       label: Keywords.No,
@@ -93,7 +93,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertText: Keywords.No,
       documentation: "option of negative confirmation",
       range,
-      sortText: "11",
+      sortText: "10",
     },
     {
       label: Keywords.Imagen,
@@ -103,7 +103,7 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "Insert a image",
       range,
-      sortText: "12",
+      sortText: "11",
     },
     {
       label: Keywords.Formulario,
@@ -116,6 +116,14 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
       insertTextRules:
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       documentation: "Create a form with fields",
+      range,
+      sortText: "12",
+    },
+    {
+      label: Keywords.Titulo,
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: Keywords.Titulo + ": ${1:titulo}",
+      documentation: "Create a title",
       range,
       sortText: "13",
     },

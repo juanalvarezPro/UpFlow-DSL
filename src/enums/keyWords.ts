@@ -1,5 +1,6 @@
 export enum Keywords {
     Pantalla = 'Pantalla',
+    Titulo = 'Titulo',
     Mostramos = 'Mostramos',
     Lista = 'Lista',
     SiEliges = 'Si eliges',

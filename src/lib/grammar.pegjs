@@ -74,6 +74,7 @@ Screen
 
       const dropdowns = content.filter(c => c.type === "Dropdown");
       const texts = content.filter(c => c.type === "TextParagraph");
+      const titles = content.filter(c => c.type === "TextSubheading");
       
       // Buscar texto de navegación en los textos
       let nextScreenName = null;
@@ -139,8 +140,16 @@ Screen
         });
       }
 
-      // Construir children del layout
-      const layoutChildren = [...texts.map(t => ({ type: "TextBody", text: t.text }))];
+      // Construir children del layout manteniendo el orden original
+      const layoutChildren = content
+        .filter(c => c.type === "TextParagraph" || c.type === "TextSubheading")
+        .map(c => {
+          if (c.type === "TextParagraph") {
+            return { type: "TextBody", text: c.text };
+          } else if (c.type === "TextSubheading") {
+            return { type: "TextSubheading", text: c.text };
+          }
+        });
       
       // Solo agregar Form si hay dropdowns o navegación
       if (dropdowns.length > 0 || nextScreenName) {
@@ -164,7 +173,7 @@ Screen
   / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
+  = (Lista / Titulo / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
 
 InvalidOptionLine
   = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
@@ -183,6 +192,10 @@ InvalidKeywordLine
 Text
   = line:TextLine __ {
       return { type: "TextParagraph", text: line };
+    }
+ Titulo
+  = "Titulo" __ ":" __ title:TextLine __ {
+      return { type: "TextSubheading", text: title };
     }
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
