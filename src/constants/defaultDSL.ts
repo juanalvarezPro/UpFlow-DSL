@@ -9,7 +9,7 @@ Lista tipo cita:
 4. control salud - Control de Salud Preventivo
 
 Lista fecha:
-1. 2027-01-01 - Lunes, Ene 01 2027
-2. 2027-01-02 - Martes, Ene 02 2027
-3. 2027-01-03 - 
+1. 2027 01 01 - Lunes, Ene 01 2027
+2. 2027 01 02 - Martes, Ene 02 2027
+3. 2027 01 03 - Miercoles, Ene 03 2027
 `;
