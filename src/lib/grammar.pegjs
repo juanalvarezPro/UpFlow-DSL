@@ -52,6 +52,19 @@ Screen
       // --- Sección DATA ---
       const data = {};
       dropdowns.forEach(d => {
+        // Filtrar las opciones para __example__: solo mostrar enabled cuando es false
+        const exampleOptions = d.options.map(option => {
+          const filteredOption = {
+            id: option.id,
+            title: option.title
+          };
+          // Solo incluir enabled si es false
+          if (option.enabled === false) {
+            filteredOption.enabled = false;
+          }
+          return filteredOption;
+        });
+
         data[d.name] = {
           type: "array",
           items: {
@@ -61,7 +74,7 @@ Screen
               title: { type: "string" }
             }
           },
-          "__example__": d.options
+          "__example__": exampleOptions
         };
       });
 
@@ -107,10 +120,25 @@ Screen
   / "Pantalla" _ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / NonScreenText / InvalidOptionLine)*
+  = (Lista / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
 
 InvalidOptionLine
-  = !"Pantalla" !"Lista" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
+  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
+
+// Detectar palabras clave mal escritas usando patrones similares
+InvalidKeywordLine
+  = "Lis" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Lista'. Ejemplo: 'Lista Mi Lista:'"); }
+  / "List" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Lista'. Ejemplo: 'Lista Mi Lista:'"); }
+  / "Listas" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Lista'. Ejemplo: 'Lista Mi Lista:'"); }
+  / "Pantala" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Pantalla'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
+  / "Pantallas" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Pantalla'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
+  / "Opcion" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
+  / "Optional" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
+  / "Opciones" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
+  // Detectar patrones similares a "Pantalla" (falta una 'l')
+  / "Panta" [a-z]* [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Pantalla'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
+  // Detectar patrones similares a "Lista" (variaciones comunes)
+  / "Lis" [a-z]* [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Lista'. Ejemplo: 'Lista Mi Lista:'"); }
 
 Text
   = line:TextLine __ {
@@ -119,7 +147,7 @@ Text
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
 NonScreenText
-  = !"Pantalla" !"Lista" line:TextLine __ {
+  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" line:TextLine __ {
       return { type: "TextParagraph", text: line };
     }
 
