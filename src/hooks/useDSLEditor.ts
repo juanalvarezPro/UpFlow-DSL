@@ -1,8 +1,12 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import { parse, SyntaxError } from '@/lib/parser';
+// @ts-ignore: parser may not be a module, but we still want to import for runtime
+import * as parserModule from '@/lib/parser';
+const parse = parserModule.parse;
+const SyntaxError = parserModule.SyntaxError;
 import { DEFAULT_DSL } from '@/constants/defaultDSL';
+import { createUserFriendlyError, formatErrorForDisplay } from '@/lib/errorHandler';
 
 interface ParseResult {
   success: boolean;
@@ -53,17 +57,8 @@ export function useDSLEditor() {
     }
 
     try {
-      // Detectar si hay múltiples pantallas
-      const screenCount = (dslValue.match(/Pantalla\s+\w+:/g) || []).length;
-
-      let result;
-      if (screenCount > 1) {
-        // Si hay múltiples pantallas, usar la regla Flow
-        result = parse(dslValue, {}) as ParseResult['data'];
-      } else {
-        // Si hay una sola pantalla, usar SingleScreen
-        result = parse(dslValue, { startRule: 'SingleScreen' }) as ParseResult['data'];
-      }
+      // Usar la regla Flow que maneja tanto una pantalla como múltiples
+      const result = parse(dslValue, {}) as ParseResult['data'];
 
       return {
         success: true,
@@ -71,13 +66,20 @@ export function useDSLEditor() {
       };
     } catch (error) {
       if (error instanceof SyntaxError) {
+        const userFriendlyError = createUserFriendlyError(error);
         return {
           success: false,
           error: {
-            message: error.message,
+            message: formatErrorForDisplay(userFriendlyError),
             location: {
-              start: { line: 1, column: 1 },
-              end: { line: 1, column: 1 }
+              start: { 
+                line: userFriendlyError.line, 
+                column: userFriendlyError.column 
+              },
+              end: { 
+                line: userFriendlyError.line, 
+                column: userFriendlyError.column 
+              }
             }
           }
         };
