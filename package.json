@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "generate": "peggy src/lib/grammar.pegjs -o src/lib/parser.ts",
     "lint": "eslint"
   },
   "dependencies": {
