@@ -131,15 +131,27 @@ export function useDSLEditorView({ onFormat}: UseDSLEditorViewProps) {
           
           const mysuggestions = suggestions({ range: range as monaco.Range, monaco });
            
-          // Filtrar sugerencias basado en lo que el usuario está escribiendo
-          const filteredSuggestions = mysuggestions.filter(suggestion => 
-            suggestion.label.toLowerCase().startsWith(word.word.toLowerCase())
-          );
+          // Mejorar el filtrado de sugerencias
+          let filteredSuggestions = mysuggestions;
+          
+          if (word.word && word.word.length > 0) {
+            // Filtrar por coincidencia parcial (no solo al inicio)
+            filteredSuggestions = mysuggestions.filter(suggestion => 
+              suggestion.label.toLowerCase().includes(word.word.toLowerCase()) ||
+              suggestion.label.toLowerCase().startsWith(word.word.toLowerCase())
+            );
+          }
+          
+          // Si no hay coincidencias, mostrar todas las sugerencias
+          if (filteredSuggestions.length === 0) {
+            filteredSuggestions = mysuggestions;
+          }
           
           return {
-            suggestions: filteredSuggestions.length > 0 ? filteredSuggestions : mysuggestions,
+            suggestions: filteredSuggestions,
           };
         },
+        triggerCharacters: [' ', ':', '\n'],
       });
     }, []);
   
