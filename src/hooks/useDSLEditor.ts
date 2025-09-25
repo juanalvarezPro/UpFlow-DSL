@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-// @ts-ignore: parser may not be a module, but we still want to import for runtime
+// @ts-expect-error: parser may not be a module, but we still want to import for runtime
 import * as parserModule from '@/lib/parser';
 const parse = parserModule.parse;
 const SyntaxError = parserModule.SyntaxError;
 import { DEFAULT_DSL } from '@/constants/defaultDSL';
-import { createUserFriendlyError, formatErrorForDisplay } from '@/lib/errorHandler';
+
+
 
 interface ParseResult {
   success: boolean;
@@ -66,19 +67,18 @@ export function useDSLEditor() {
       };
     } catch (error) {
       if (error instanceof SyntaxError) {
-        const userFriendlyError = createUserFriendlyError(error);
         return {
           success: false,
           error: {
-            message: formatErrorForDisplay(userFriendlyError),
+            message: error.message,
             location: {
               start: { 
-                line: userFriendlyError.line, 
-                column: userFriendlyError.column 
+                line: error.location?.start?.line || 1, 
+                column: error.location?.start?.column || 1 
               },
               end: { 
-                line: userFriendlyError.line, 
-                column: userFriendlyError.column 
+                line: error.location?.end?.line || 1, 
+                column: error.location?.end?.column || 1 
               }
             }
           }
