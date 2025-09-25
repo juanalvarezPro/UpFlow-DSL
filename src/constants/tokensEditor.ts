@@ -19,6 +19,7 @@ const opcionalRegex = new RegExp(`\\b${Keywords.Opcional}\\b`);
 export const tokensEditor = {
     tokenizer: {
         root: [
+            [/\/\/.*$/, 'comment'], // Comentarios de línea
             [pantallaRegex, 'keyword'],
             [mostramosRegex, 'keyword'],
             [listaRegex, 'keyword'],

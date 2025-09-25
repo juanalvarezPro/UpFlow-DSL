@@ -58,8 +58,14 @@ export function useDSLEditor() {
     }
 
     try {
+      // Pre-procesar el DSL para eliminar comentarios
+      const processedDSL = dslValue
+        .split('\n')
+        .map(line => line.trim().startsWith('//') ? '' : line)
+        .join('\n');
+      
       // Usar la regla Flow que maneja tanto una pantalla como múltiples
-      const result = parse(dslValue, {}) as ParseResult['data'];
+      const result = parse(processedDSL, {}) as ParseResult['data'];
 
       return {
         success: true,
