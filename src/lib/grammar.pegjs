@@ -4,6 +4,7 @@
     return text.toLowerCase().replace(/ /g, "_");
   }
 
+
   function makeScreenId(text) {
     // Si el texto tiene espacios, reemplazar con guiones bajos
     // Si no tiene espacios, usar tal como está
@@ -29,7 +30,7 @@
 }
 
 Flow
-  = _ screens:Screen+ _ {
+  = __ screens:Screen+ _ {
       // Validar que todas las pantallas referenciadas existan
       const existingScreenIds = new Set(screens.map(s => s.id));
       for (const referencedScreen of referencedScreens) {
@@ -39,7 +40,7 @@ Flow
       }
       return { version: "6.0", screens };
     }
-  / _ screen:Screen _ {
+  / __ screen:Screen _ {
       // Validar que todas las pantallas referenciadas existan
       const existingScreenIds = new Set([screen.id]);
       for (const referencedScreen of referencedScreens) {
@@ -49,6 +50,7 @@ Flow
       }
       return { version: "6.0", screens: [screen] };
     }
+  / _ { error("Error: El DSL debe contener al menos una pantalla. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 // También permitir parsear una sola pantalla
 SingleScreen
@@ -61,7 +63,7 @@ OptionalQuotedTitle
   / "" { return null; }
 
 Screen
-  = "Pantalla" _ id:ScreenIdentifier title:OptionalQuotedTitle? ":" __ content:ScreenContent {
+  = __ "Pantalla" __ id:ScreenIdentifier title:OptionalQuotedTitle? ":" __ content:ScreenContent {
       const screenId = makeScreenId(id);
       
       // Validar ID único de pantalla
@@ -159,7 +161,7 @@ Screen
         }
       };
     }
-  / "Pantalla" _ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
+  / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
   = (Lista / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
@@ -207,7 +209,7 @@ Lista
         label: "Seleccione " + name,
         required: true, 
         options: opts.map(o => ({
-          id: makeScreenId(o.title),
+          id: o.id,
           title: o.title,
           enabled: o.enabled !== undefined ? o.enabled : true
         }))
@@ -228,7 +230,7 @@ Lista
         label: title,
         required: true, 
         options: opts.map(o => ({
-          id: makeScreenId(o.title),
+          id: o.id,
           title: o.title,
           enabled: o.enabled !== undefined ? o.enabled : true
         }))
@@ -256,13 +258,35 @@ QuotedTitle
   / "\"" t:[^"]* { error("Error de sintaxis: Las comillas no están cerradas correctamente. Ejemplo: '\"Mi Título\"'"); }
 
 OptionLine
-  = [0-9]+ "." _ opt:OptionalHabilitado? text:ValidTextLine __ {
+  = [0-9]+ "." _ opt:OptionalHabilitado? option:DashOption __ {
+      return {
+        id: option.id,
+        title: option.title,
+        enabled: opt !== null ? opt : true
+      };
+    }
+  / [0-9]+ "." _ opt:OptionalHabilitado? text:ValidTextLine __ {
       return {
         id: makeScreenId(text),
         title: text,
         enabled: opt !== null ? opt : true
       };
     }
+
+
+DashOption
+  = id:OptionId _ "-" _ title:OptionTitle {
+      return {
+        id: makeId(id),
+        title: title
+      };
+    }
+
+OptionId
+  = [A-Za-z0-9_ ]+ { return text().trim(); }
+
+OptionTitle
+  = [^\n]+ { return text().trim(); }
 
 OptionalHabilitado
   = "Opcional" ":" _ { return false; }
@@ -279,7 +303,7 @@ TextLine
   = [^\n]+ { return text().trim(); }
 
 ValidTextLine
-  = !"Opcional" [^\n]+ { return text().trim(); }
+  = !"Opcional" !([A-Za-z0-9_]+ _ "-") [^\n]+ { return text().trim(); }
   / "Opcional" !":" [^\n]* { error("Error de sintaxis: 'Opcional' debe ir seguido de ':'. Ejemplo: 'Opcional: mi texto'"); }
 
 _  = [ \t]*
