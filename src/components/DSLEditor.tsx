@@ -55,7 +55,7 @@ export function DSLEditor({ value, onChange, error, onFormat }: DSLEditorProps) 
               base: 'vs-dark',
               inherit: true,
               rules: [
-                { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+                { token: 'comment', foreground: '64748B', fontStyle: 'italic' },
                 { token: 'keyword', foreground: '569CD6', fontStyle: 'bold' },
                 { token: 'string', foreground: 'CE9178' },
                 { token: 'number', foreground: 'B5CEA8' },
