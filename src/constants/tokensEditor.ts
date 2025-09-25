@@ -4,7 +4,6 @@ import { Keywords } from '@/enums/keyWords';
 // Create regex patterns for all keywords, escaping special characters
 const pantallaRegex = new RegExp(`\\b${Keywords.Pantalla}\\b`);
 const mostramosRegex = new RegExp(`\\b${Keywords.Mostramos}\\b`);
-const opcionesRegex = new RegExp(`\\b${Keywords.Opciones}\\b`);
 const listaRegex = new RegExp(`\\b${Keywords.Lista}\\b`);
 const siEligesRegex = new RegExp(Keywords.SiEliges.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 const irAPantallaRegex = new RegExp(Keywords.IrAPantalla.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
@@ -14,8 +13,7 @@ const siRegex = new RegExp(`\\b${Keywords.Sí}\\b`);
 const noRegex = new RegExp(`\\b${Keywords.No}\\b`);
 const imagenRegex = new RegExp(`\\b${Keywords.Imagen}\\b`);
 const formularioRegex = new RegExp(Keywords.Formulario.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-const requiredRegex = new RegExp(`\\b${Keywords.Required}\\b`);
-const habilitadoRegex = new RegExp(`\\b${Keywords.Habilitado}\\b`);
+const opcionalRegex = new RegExp(`\\b${Keywords.Opcional}\\b`);
 
 
 export const tokensEditor = {
@@ -23,7 +21,6 @@ export const tokensEditor = {
         root: [
             [pantallaRegex, 'keyword'],
             [mostramosRegex, 'keyword'],
-            [opcionesRegex, 'keyword'],
             [listaRegex, 'keyword'],
             [siEligesRegex, 'keyword'],
             [irAPantallaRegex, 'keyword'],
@@ -33,8 +30,7 @@ export const tokensEditor = {
             [noRegex, 'keyword'],
             [imagenRegex, 'keyword'],
             [formularioRegex, 'keyword'],
-            [requiredRegex, 'keyword'],
-            [habilitadoRegex, 'keyword'],
+            [opcionalRegex, 'keyword'],
             [/•/, 'bullet'],
             [/[0-9]+\./, 'number'],
             [/\[IMAGEN:[^\]]*\]/, 'string'],
