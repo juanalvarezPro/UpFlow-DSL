@@ -7,7 +7,7 @@ import { GitHubStarsButton } from './ui/GitHubStarsButton';
 import { Footer } from './ui/Footer';
 
 export function MainLayout() {
-  const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error } = useDSLEditor();
+  const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error, warnings } = useDSLEditor();
   
   return (
     <div className="h-screen flex flex-col bg-blue-blur relative overflow-hidden">
@@ -49,6 +49,7 @@ export function MainLayout() {
             value={dslValue}
             onChange={handleDSLChange}
             error={error}
+            warnings={warnings}
             onFormat={handleFormat}
           />
         </div>

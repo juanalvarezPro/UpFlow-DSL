@@ -6,6 +6,7 @@ import * as parserModule from '@/lib/parser';
 const parse = parserModule.parse;
 const SyntaxError = parserModule.SyntaxError;
 import { DEFAULT_DSL } from '@/constants/defaultDSL';
+import { validateDSL, ValidationWarning } from '@/lib/validation';
 
 
 
@@ -36,6 +37,7 @@ interface ParseResult {
       end: { line: number; column: number };
     };
   };
+  warnings?: ValidationWarning[];
 }
 
 const DEFAULT_DSL_VALUE = DEFAULT_DSL;
@@ -57,6 +59,9 @@ export function useDSLEditor() {
       };
     }
 
+    // Validate DSL content first
+    const validationResult = validateDSL(dslValue);
+
     try {
       // Pre-procesar el DSL para eliminar comentarios
       const processedDSL = dslValue
@@ -69,25 +74,33 @@ export function useDSLEditor() {
 
       return {
         success: true,
-        data: result
+        data: result,
+        warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
       };
     } catch (error) {
       if (error instanceof SyntaxError) {
+        const syntaxError = error as SyntaxError & {
+          location?: {
+            start?: { line?: number; column?: number };
+            end?: { line?: number; column?: number };
+          };
+        };
         return {
           success: false,
           error: {
-            message: error.message,
+            message: syntaxError.message,
             location: {
               start: { 
-                line: error.location?.start?.line || 1, 
-                column: error.location?.start?.column || 1 
+                line: syntaxError.location?.start?.line || 1, 
+                column: syntaxError.location?.start?.column || 1 
               },
               end: { 
-                line: error.location?.end?.line || 1, 
-                column: error.location?.end?.column || 1 
+                line: syntaxError.location?.end?.line || 1, 
+                column: syntaxError.location?.end?.column || 1 
               }
             }
-          }
+          },
+          warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
         };
       }
       return {
@@ -98,7 +111,8 @@ export function useDSLEditor() {
             start: { line: 1, column: 1 },
             end: { line: 1, column: 1 }
           }
-        }
+        },
+        warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
       };
     }
   }, [dslValue]);
@@ -125,6 +139,7 @@ export function useDSLEditor() {
     parseResult,
     isValid: parseResult.success,
     jsonData: parseResult.success ? parseResult.data : null,
-    error: parseResult.success ? null : parseResult.error
+    error: parseResult.success ? null : parseResult.error,
+    warnings: parseResult.warnings
   };
 }

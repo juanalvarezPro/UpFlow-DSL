@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useDSLEditorView } from '@/hooks/views/useDSLEditor.view';
+import { ValidationWarning } from '@/lib/validation';
 import dynamic from 'next/dynamic';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
@@ -17,10 +18,11 @@ interface DSLEditorProps {
       end: { line: number; column: number };
     };
   } | null;
+  warnings?: ValidationWarning[] | null;
   onFormat?: () => void;
 }
 
-export function DSLEditor({ value, onChange, error, onFormat }: DSLEditorProps) {
+export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEditorProps) {
   const { handleEditorDidMount, handleFormat } = useDSLEditorView({ onFormat: onFormat || (() => { }) });
 
   return (
@@ -123,6 +125,26 @@ export function DSLEditor({ value, onChange, error, onFormat }: DSLEditorProps) 
           }}
         />
       </div>
+
+      {/* Warnings */}
+      {warnings && warnings.length > 0 && (
+        <div className="px-6 py-4 bg-yellow-950/30 border-t border-yellow-500/20 glass-subtle flex-shrink-0">
+          <div className="space-y-3">
+            {warnings.map((warning, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <AlertCircle className="h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1 min-w-0">
+                  <div className="text-sm font-medium text-yellow-300">Advertencia</div>
+                  <div className="text-sm text-yellow-200 break-words">{warning.message}</div>
+                  <div className="text-xs text-yellow-400">
+                    Línea {warning.location.start.line}, columna {warning.location.start.column}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Error */}
       {error && (
