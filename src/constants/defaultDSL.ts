@@ -1,21 +1,9 @@
 import { Keywords } from "@/enums/keyWords";
 
-export const DEFAULT_DSL = `${Keywords.Pantalla} CITA:
-Agenda una cita en nuestra clínica
-${Keywords.Opciones}:
-1. Consulta General
-2. Consulta Especializada
-3. Examen de Laboratorio
-4. Control de Salud Preventivo
+export const DEFAULT_DSL = `${Keywords.Pantalla} CITA prueba:
 
-${Keywords.Pantalla} DETALLES:
-Completa tu información personal
-${Keywords.Opciones}:
-1. Continuar
-2. Volver
-
-${Keywords.Pantalla} CONFIRMACION:
-¿Confirmas tu cita?
-${Keywords.Opciones}:
-1. Confirmar
-2. Rechazar`;
+${Keywords.Lista} Nombre:
+1. ${Keywords.Opcional}: prueba
+2. otra prueba
+3. otro nodo
+`;
