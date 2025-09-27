@@ -51,17 +51,17 @@ export function MainLayout() {
 
       {/* Header */}
       <header className="glass-strong border-b border-blue-500/20 relative z-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50"></div>
-                <h1 className="text-xl font-bold text-gradient">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50 flex-shrink-0"></div>
+                <h1 className="text-lg sm:text-xl font-bold text-gradient truncate">
                   UpFlows! DSL
                 </h1>
               </div>
-              <div className="hidden sm:flex flex-col">
-                <p className="text-sm text-slate-300/80">
+              <div className="hidden md:flex flex-col min-w-0">
+                <p className="text-sm text-slate-300/80 truncate">
                   Crea Flows de Whatsapp Meta con sintaxis natural
                 </p>
                 {error ? (
@@ -78,46 +78,61 @@ export function MainLayout() {
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowAIGenerator(true)}
-                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-purple-500/10 border border-purple-500/20 hover:border-purple-400/30 transition-all duration-200 rounded-lg"
+                className="flex items-center gap-1 sm:gap-2 text-slate-300 hover:text-slate-100 hover:bg-purple-500/10 border border-purple-500/20 hover:border-purple-400/30 transition-all duration-200 rounded-lg px-2 sm:px-3"
                 title="Generar flow con IA"
               >
-                <Sparkles className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm font-medium">IA</span>
+                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden lg:inline text-sm font-medium">IA</span>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowGettingStarted(true)}
-                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+                className="flex items-center gap-1 sm:gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg px-2 sm:px-3"
                 title="Abrir guía de inicio"
               >
-                <BookOpen className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm font-medium">Guía</span>
+                <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden lg:inline text-sm font-medium">Guía</span>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleClearDSL}
-                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-red-500/10 border border-red-500/20 hover:border-red-400/30 transition-all duration-200 rounded-lg"
+                className="flex items-center gap-1 sm:gap-2 text-slate-300 hover:text-slate-100 hover:bg-red-500/10 border border-red-500/20 hover:border-red-400/30 transition-all duration-200 rounded-lg px-2 sm:px-3"
                 title="Limpiar DSL guardado"
               >
-                <Trash2 className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm font-medium">Limpiar</span>
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden lg:inline text-sm font-medium">Limpiar</span>
               </Button>
             </div>
+          </div>
+          
+          {/* Mobile status bar */}
+          <div className="md:hidden px-3 pb-2">
+            {error ? (
+              <div className="text-red-400 text-xs font-medium">
+                No se puede guardar: hay errores de sintaxis
+              </div>
+            ) : (
+              <AutoSaveIndicator 
+                isAutoSaving={isAutoSaving}
+                lastSaved={lastSaved}
+                hasUnsavedChanges={hasUnsavedChanges}
+              />
+            )}
           </div>
         </div>
       </header>
       
       {/* Main Content */}
-      <main className="flex flex-col lg:flex-row p-4 gap-4 relative z-10 h-[calc(100vh-100px)]">
+      <main className="flex flex-col xl:flex-row p-2 sm:p-3 lg:p-4 gap-2 sm:gap-3 lg:gap-4 relative z-10 h-[calc(100vh-80px)] sm:h-[calc(100vh-90px)] lg:h-[calc(100vh-100px)]">
         {/* Editor DSL */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 w-full xl:w-1/2">
           <DSLEditor
             value={dslValue}
             onChange={handleDSLChange}
@@ -128,7 +143,7 @@ export function MainLayout() {
         </div>
         
         {/* JSON Preview */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 w-full xl:w-1/2">
           <JSONPreview
             data={jsonData}
             isValid={isValid}

@@ -74,6 +74,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [showScreenOptions, setShowScreenOptions] = useState(false);
+  const [showMobileModal, setShowMobileModal] = useState(false);
 
   // Cerrar dropdowns al hacer clic fuera
   useEffect(() => {
@@ -163,6 +164,10 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
+    // En móviles, abrir modal automáticamente al ejecutar
+    if (!isPlaying && window.innerWidth < 1024) {
+      setShowMobileModal(true);
+    }
   };
 
   const generateJSON = () => {
@@ -229,61 +234,74 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       </div>
 
       {/* Header del Preview */}
-      <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 rounded-full shadow-lg ${
+      <div className="glass-strong border-b border-blue-500/20 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div className={`w-2 h-2 rounded-full shadow-lg flex-shrink-0 ${
             error || !isValid 
               ? 'bg-red-400 shadow-red-400/50' 
               : 'bg-blue-400 shadow-blue-400/50'
           }`}></div>
-          <div className="text-white text-sm font-medium">
+          <div className="text-white text-xs sm:text-sm font-medium truncate">
             {error || !isValid ? 'Error en el DSL' : 'Vista Previa Interactiva'}
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
-          {/* Botones de control */}
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          {/* Botón de modal para móviles */}
+          {!error && isValid && processedData && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowMobileModal(true)}
+              className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 p-1.5 sm:p-2 lg:hidden"
+              title="Ver preview en pantalla completa"
+            >
+              <Smartphone className="h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+          )}
+          
+          {/* Botones de control - solo en desktop */}
           {!error && isValid && processedData && (
             <>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={togglePlay}
-                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                className="hidden lg:flex text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 p-1.5 sm:p-2"
                 title={isPlaying ? "Pausar" : "Ejecutar"}
               >
-                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {isPlaying ? <Pause className="h-3 w-3 sm:h-4 sm:w-4" /> : <Play className="h-3 w-3 sm:h-4 sm:w-4" />}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={resetPreview}
-                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                className="hidden lg:flex text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 p-1.5 sm:p-2"
                 title="Reiniciar"
               >
-                <RotateCcw className="h-4 w-4" />
+                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </>
           )}
           
-          {/* Botón de opciones de pantallas */}
+          {/* Botón de opciones de pantallas - solo en desktop */}
           {!error && isValid && processedData && processedData.screens.length > 1 && (
-            <div className="relative dropdown-container">
+            <div className="relative dropdown-container hidden lg:block">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowScreenOptions(!showScreenOptions)}
-                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-2"
+                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
                 title="Seleccionar pantalla"
               >
-                <span className="text-xs">
+                <span className="text-xs truncate max-w-20 sm:max-w-none">
                   {processedData.screens[currentScreenIndex]?.title || `Pantalla ${currentScreenIndex + 1}`}
                 </span>
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDown className="h-3 w-3 flex-shrink-0" />
               </Button>
               
               {showScreenOptions && (
-                <div className="absolute top-full right-0 mt-1 w-64 bg-slate-900/95 backdrop-blur-md border border-blue-500/30 rounded-lg shadow-2xl z-[100]">
+                <div className="absolute top-full right-0 mt-1 w-48 sm:w-64 bg-slate-900/95 backdrop-blur-md border border-blue-500/30 rounded-lg shadow-2xl z-[100]">
                   <div className="p-2">
                     <div className="text-xs text-blue-300 mb-2 px-2 font-medium">Seleccionar pantalla:</div>
                     {processedData.screens.map((screen: { id: string; title: string }, index: number) => (
@@ -293,13 +311,13 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                           setCurrentScreenIndex(index);
                           setShowScreenOptions(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm transition-colors ${
                           index === currentScreenIndex
                             ? 'bg-blue-600/40 text-white border border-blue-500/30'
                             : 'text-slate-200 hover:text-white hover:bg-blue-500/20 border border-transparent'
                         }`}
                       >
-                        <div className="font-medium">{screen.title}</div>
+                        <div className="font-medium truncate">{screen.title}</div>
                         <div className="text-xs text-blue-300">Pantalla {index + 1}</div>
                       </button>
                     ))}
@@ -309,76 +327,76 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
             </div>
           )}
           
-          {/* Botones de opciones */}
+          {/* Botones de opciones - solo en desktop */}
           {!error && isValid && processedData && (
             <>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={copyJSONToClipboard}
-                className={`border border-blue-500/20 ${
+                className={`hidden lg:flex border border-blue-500/20 p-1.5 sm:p-2 ${
                   copied 
                     ? 'text-green-400 bg-green-500/20' 
                     : 'text-slate-300 hover:text-white hover:bg-blue-500/20'
                 }`}
                 title={copied ? "¡Copiado!" : "Copiar código"}
               >
-                <Code className="h-4 w-4" />
+                <Code className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleExport}
                 disabled={isExporting || !processedData}
-                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 disabled:opacity-50"
+                className="hidden lg:flex text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 disabled:opacity-50 p-1.5 sm:p-2"
                 title="Exportar"
               >
                 {isExporting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                 ) : (
-                  <Download className="h-4 w-4" />
+                  <Download className="h-3 w-3 sm:h-4 sm:w-4" />
                 )}
               </Button>
             </>
           )}
           
-          <div className="glass-subtle rounded-lg px-3 py-2 flex items-center gap-2">
-            <Smartphone className="h-4 w-4 text-blue-300" />
-            <span className="text-sm font-medium text-white">WhatsApp Business</span>
+          <div className="glass-subtle rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 flex items-center gap-1 sm:gap-2">
+            <Smartphone className="h-3 w-3 sm:h-4 sm:w-4 text-blue-300 flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium text-white truncate">WhatsApp Business</span>
           </div>
         </div>
       </div>
 
       {/* Contenido Principal */}
-      <div className="flex-1 p-6 flex justify-center relative z-0 overflow-hidden">
-        <div className="w-full max-w-sm h-full flex flex-col">
+      <div className="flex-1 p-3 sm:p-4 lg:p-6 flex justify-center relative z-0 overflow-hidden">
+        <div className="w-full max-w-xs sm:max-w-sm h-full flex flex-col">
           {/* Estado de error o sin datos */}
           {error || !isValid || !processedData ? (
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[500px]">
+            <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[400px] sm:min-h-[500px]">
               {/* Header de error */}
-              <div className={`px-4 py-3 flex items-center justify-between flex-shrink-0 ${
+              <div className={`px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between flex-shrink-0 ${
                 error || !isValid 
                   ? 'bg-gradient-to-r from-red-600 to-red-700' 
                   : 'bg-gradient-to-r from-slate-600 to-slate-700'
               }`}>
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="h-5 w-5 text-white" />
-                  <h2 className="font-semibold text-white">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-white flex-shrink-0" />
+                  <h2 className="font-semibold text-white text-sm sm:text-base truncate">
                     {error || !isValid ? 'Error en el DSL' : 'DSL vacío'}
                   </h2>
                 </div>
-                <X className="h-5 w-5 text-white" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5 text-white flex-shrink-0" />
               </div>
 
               {/* Contenido de error o sin datos */}
-              <div className="flex-1 p-6 flex flex-col items-center justify-center space-y-6">
+              <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center space-y-4 sm:space-y-6">
                 {/* Icono de error grande */}
-                <div className={`w-20 h-20 rounded-full flex items-center justify-center ${
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center ${
                   error || !isValid 
                     ? 'bg-red-500/20' 
                     : 'bg-slate-500/20'
                 }`}>
-                  <AlertTriangle className={`h-10 w-10 ${
+                  <AlertTriangle className={`h-8 w-8 sm:h-10 sm:w-10 ${
                     error || !isValid 
                       ? 'text-red-400' 
                       : 'text-slate-400'
@@ -387,10 +405,10 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                 
                 {/* Mensaje principal */}
                 <div className="text-center space-y-1">
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-lg sm:text-xl font-bold text-white">
                     {error || !isValid ? '¡Ups! Te equivocaste!' : 'El DSL está vacío'}
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-slate-300 leading-relaxed text-sm sm:text-base px-2">
                     {error || !isValid 
                       ? 'Revisa en nuestro compilador de sintaxis natural.'
                       : 'Comienza escribiendo tu código DSL en el editor para ver la vista previa aquí.'
@@ -400,14 +418,14 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                 
                 {/* Detalles del error */}
                 {error && (
-                  <div className="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-red-300 mb-2">
+                  <div className="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-3 sm:p-4">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-red-300 mb-2">
                           🔍 Error
                         </p>
-                          <p className="text-sm text-red-200/90 break-words font-mono leading-relaxed">
+                          <p className="text-xs sm:text-sm text-red-200/90 break-words font-mono leading-relaxed">
                             {error}
                           </p>
                         <p className="text-xs text-red-300/70 mt-2">
@@ -422,12 +440,12 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
               </div>
 
               {/* Footer de error o sin datos */}
-              <div className={`px-4 py-3 border-t flex-shrink-0 h-16 flex items-center justify-center ${
+              <div className={`px-3 sm:px-4 py-2 sm:py-3 border-t flex-shrink-0 h-12 sm:h-16 flex items-center justify-center ${
                 error || !isValid 
                   ? 'bg-red-500/10 border-red-500/20' 
                   : 'bg-slate-500/10 border-slate-500/20'
               }`}>
-                <p className={`text-xs text-center ${
+                <p className={`text-xs text-center px-2 ${
                   error || !isValid 
                     ? 'text-red-300' 
                     : 'text-slate-300'
@@ -441,12 +459,18 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
             </div>
           ) : (
             /* Mockup glassmorphism coherente con el proyecto */
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full">
+            <div className={`glass rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full ${isPlaying ? 'ring-2 ring-blue-400/50' : ''}`}>
             {/* Header de WhatsApp */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <X className="h-5 w-5 text-white" />
-                <h2 className="font-semibold text-white">{currentScreen.title}</h2>
+                <h2 className="text-base font-semibold text-white">{currentScreen.title}</h2>
+                {isPlaying && (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-200 font-medium">Ejecutando</span>
+                  </div>
+                )}
               </div>
               <MoreVertical className="h-5 w-5 text-white" />
             </div>
@@ -547,7 +571,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                               </label>
                               <div className="relative">
                                 <select 
-                                  className="w-full px-3 py-3 bg-white/40 backdrop-blur-md border border-blue-400/30 rounded-lg text-sm text-slate-900 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400/60 focus:border-transparent shadow-lg"
+                                  className="w-full px-3 py-3 text-sm bg-white/40 backdrop-blur-md border border-blue-400/30 rounded-lg text-slate-900 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400/60 focus:border-transparent shadow-lg"
                                   value={formData[formChild.name] || ""}
                                   onChange={(e) => handleFormChange(formChild.name, e.target.value)}
                                 >
@@ -576,7 +600,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                     <Button 
                       onClick={handleContinue}
                       disabled={!isFormComplete}
-                      className={`w-full py-3 rounded-lg font-medium transition-all duration-200 ${
+                      className={`w-full py-3 text-base rounded-lg font-medium transition-all duration-200 ${
                         isFormComplete 
                           ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/25' 
                           : 'bg-slate-300 text-slate-500 cursor-not-allowed'
@@ -602,6 +626,57 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       </div>
 
 
+      {/* Footer con controles para móviles */}
+      {!error && isValid && processedData && (
+        <div className="lg:hidden glass-strong border-t border-blue-500/20 px-4 py-3 relative z-10">
+          <div className="flex items-center justify-between gap-3">
+            {/* Información de pantalla */}
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50 flex-shrink-0"></div>
+              <span className="text-sm text-white truncate">
+                {processedData.screens[currentScreenIndex]?.title || `Pantalla ${currentScreenIndex + 1}`}
+              </span>
+              {processedData.screens.length > 1 && (
+                <span className="text-xs text-slate-400">
+                  {currentScreenIndex + 1}/{processedData.screens.length}
+                </span>
+              )}
+            </div>
+            
+            {/* Controles móviles */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={togglePlay}
+                className={`flex items-center gap-2 px-3 py-2 ${
+                  isPlaying 
+                    ? 'text-green-400 bg-green-500/20 border border-green-500/30' 
+                    : 'text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20'
+                }`}
+                title={isPlaying ? "Pausar" : "Ejecutar"}
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                <span className="text-sm font-medium">
+                  {isPlaying ? "Pausar" : "Ejecutar"}
+                </span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowMobileModal(true)}
+                className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                title="Ver preview"
+              >
+                <Smartphone className="h-4 w-4" />
+                <span className="text-sm font-medium">Preview</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Indicadores de navegación */}
       {!error && isValid && processedData && (
         <div className="flex justify-center mt-4 space-x-2 relative z-0">
@@ -615,6 +690,238 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
             }`}
           ></div>
         ))}
+        </div>
+      )}
+
+      {/* Modal para móviles */}
+      {showMobileModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 lg:hidden">
+          <div className="w-full max-w-sm h-[80vh] flex flex-col">
+            {/* Header del modal */}
+            <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50"></div>
+                <h2 className="text-sm font-semibold text-white">Preview del Flujo</h2>
+                {isPlaying && (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-200 font-medium">Ejecutando</span>
+                  </div>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowMobileModal(false)}
+                className="text-slate-300 hover:text-white hover:bg-red-500/20 border border-red-500/20 p-1.5"
+                title="Cerrar"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Contenido del modal */}
+            <div className="flex-1 overflow-hidden">
+              {/* Mockup del teléfono */}
+              <div className="h-full flex justify-center items-center p-4">
+                <div className="w-full max-w-xs h-full flex flex-col">
+                  <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full">
+                    {/* Header de WhatsApp */}
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
+                      <div className="flex items-center gap-3">
+                        <X className="h-5 w-5 text-white" />
+                        <h2 className="text-base font-semibold text-white">{currentScreen.title}</h2>
+                        {isPlaying && (
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span className="text-xs text-green-200 font-medium">Ejecutando</span>
+                          </div>
+                        )}
+                      </div>
+                      <MoreVertical className="h-5 w-5 text-white" />
+                    </div>
+
+                    {/* Contenido con scroll mejorado */}
+                    <div className="flex-1 overflow-y-auto bg-slate-50/10 backdrop-blur-sm">
+                      <div className="p-4 space-y-4 pb-6">
+                        {/* Contenido de texto */}
+                        {currentScreen.layout?.children?.map((child: DSLChild, index: number) => {
+                          if (child.type === "TextSubheading") {
+                            return (
+                              <h1 key={index} className="text-xl font-bold text-white text-center mb-3">
+                                {child.text}
+                              </h1>
+                            );
+                          }
+                          if (child.type === "TextBody") {
+                            return (
+                              <p key={index} className="text-sm text-slate-100 text-center leading-relaxed mb-3">
+                                {child.text}
+                              </p>
+                            );
+                          }
+                          if ('text' in child && child.text && typeof child.text === 'string' && child.text.includes("Ir a pantalla")) {
+                            return (
+                              <p key={index} className="text-sm text-blue-200 text-center font-medium">
+                                {child.text}
+                              </p>
+                            );
+                          }
+                          if (child.type === "Image") {
+                            return (
+                              <div key={index} className="relative">
+                                <div 
+                                  className="bg-gradient-to-br from-blue-400/20 to-blue-500/20 backdrop-blur-sm rounded-lg flex items-center justify-center overflow-hidden border border-blue-500/20"
+                                  style={{
+                                    width: child.width ? `${child.width}px` : '100%',
+                                    height: child.height ? `${child.height}px` : '160px'
+                                  }}
+                                >
+                                  <Image 
+                                    src={child.src}
+                                    width={child.width || 400}
+                                    height={child.height || 160}
+                                    alt="Imagen del flow"
+                                    className="rounded-lg"
+                                    style={{
+                                      width: child.width ? `${child.width}px` : 'auto',
+                                      height: child.height ? `${child.height}px` : 'auto',
+                                      maxWidth: '100%',
+                                      maxHeight: '100%',
+                                      objectFit: 'contain'
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })}
+
+                        {/* Formulario interactivo */}
+                        <div className="space-y-4">
+                          {/* Dropdowns del formulario */}
+                          {currentScreen.layout?.children?.find((child: DSLChild): child is FormChild => child.type === "Form") && 
+                            currentScreen.layout.children
+                              .find((child: DSLChild): child is FormChild => child.type === "Form")
+                              ?.children?.map((formChild: FormElementChild, index: number) => {
+                                if (formChild.type === "Dropdown") {
+                                  const dataSource = formChild["data-source"];
+                                  const dataKey = dataSource?.replace("${data.", "").replace("}", "");
+                                  const options = currentScreen.data?.[dataKey]?.["__example__"] || [];
+                                  
+                                  return (
+                                    <div key={index} className="space-y-2">
+                                      <label className="text-sm font-medium text-white">
+                                        {formChild.label}
+                                      </label>
+                                      <div className="relative">
+                                        <select 
+                                          className="w-full px-3 py-3 bg-white/40 backdrop-blur-md border border-blue-400/30 rounded-lg text-sm text-slate-900 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400/60 focus:border-transparent shadow-lg"
+                                          value={formData[formChild.name] || ""}
+                                          onChange={(e) => handleFormChange(formChild.name, e.target.value)}
+                                        >
+                                          <option value="">Seleccionar...</option>
+                                          {options.map((option: { id: string; title: string; enabled?: boolean }, optIndex: number) => (
+                                            <option 
+                                              key={optIndex} 
+                                              value={option.id}
+                                              disabled={option.enabled === false}
+                                              style={option.enabled === false ? { color: '#9ca3af', fontStyle: 'italic' } : {}}
+                                            >
+                                              {option.title}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <ArrowRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })}
+                          
+                          {/* Botón Continuar */}
+                          <div className="pt-2">
+                            <Button 
+                              onClick={handleContinue}
+                              disabled={!isFormComplete}
+                              className={`w-full py-3 rounded-lg font-medium transition-all duration-200 ${
+                                isFormComplete 
+                                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/25' 
+                                  : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                              }`}
+                            >
+                              Continuar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-4 py-3 bg-slate-50/10 backdrop-blur-md border-t border-blue-500/20 flex-shrink-0 h-16 flex items-center justify-center">
+                      <p className="text-xs text-white text-center">
+                        Administrado por la empresa.{' '}
+                        <span className="text-blue-300 font-medium">Más información</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer del modal con controles */}
+            <div className="glass-strong border-t border-blue-500/20 px-4 py-3 flex-shrink-0">
+              <div className="flex items-center justify-between gap-3">
+                {/* Información de pantalla */}
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50 flex-shrink-0"></div>
+                  <span className="text-sm text-white truncate">
+                    {processedData?.screens[currentScreenIndex]?.title || `Pantalla ${currentScreenIndex + 1}`}
+                  </span>
+                  {processedData && processedData.screens.length > 1 && (
+                    <span className="text-xs text-slate-400">
+                      {currentScreenIndex + 1}/{processedData.screens.length}
+                    </span>
+                  )}
+                </div>
+                
+                {/* Controles del modal */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={togglePlay}
+                    className={`flex items-center gap-2 px-3 py-2 ${
+                      isPlaying 
+                        ? 'text-green-400 bg-green-500/20 border border-green-500/30' 
+                        : 'text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20'
+                    }`}
+                    title={isPlaying ? "Pausar" : "Ejecutar"}
+                  >
+                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    <span className="text-sm font-medium">
+                      {isPlaying ? "Pausar" : "Ejecutar"}
+                    </span>
+                  </Button>
+                  
+                  {processedData && processedData.screens.length > 1 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowScreenOptions(!showScreenOptions)}
+                      className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                      title="Seleccionar pantalla"
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                      <span className="text-sm font-medium">Pantallas</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -30,29 +30,29 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
   return (
     <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-blue-500/20 glass-subtle flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50"></div>
-          <h2 className="text-sm font-semibold text-slate-200">Editor DSL</h2>
+      <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-b border-blue-500/20 glass-subtle flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50 flex-shrink-0"></div>
+          <h2 className="text-sm font-semibold text-slate-200 truncate">Editor DSL</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowImageUpload(true)}
-            className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+            className="flex items-center gap-1 sm:gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg px-2 sm:px-3"
           >
-            <ImageIcon className="h-4 w-4" />
-            <span className="text-sm font-medium">Imagen</span>
+            <ImageIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline text-sm font-medium">Imagen</span>
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleFormat}
-            className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+            className="flex items-center gap-1 sm:gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg px-2 sm:px-3"
           >
-            <RefreshCw className="h-4 w-4" />
-            <span className="text-sm font-medium">Formatear</span>
+            <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline text-sm font-medium">Formatear</span>
           </Button>
         </div>
       </div>
@@ -112,19 +112,19 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
           }}
           options={{
             minimap: { enabled: false },
-            fontSize: 15,
+            fontSize: window.innerWidth < 640 ? 14 : 15,
             lineNumbers: 'on',
             wordWrap: 'on',
             automaticLayout: true,
             fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-            lineHeight: 1.6,
-            padding: { top: 20, bottom: 20 },
+            lineHeight: window.innerWidth < 640 ? 1.4 : 1.6,
+            padding: { top: window.innerWidth < 640 ? 15 : 20, bottom: window.innerWidth < 640 ? 15 : 20 },
             cursorStyle: 'line',
             renderLineHighlight: 'line',
             mouseWheelZoom: true,
             scrollbar: {
-              verticalScrollbarSize: 8,
-              horizontalScrollbarSize: 8,
+              verticalScrollbarSize: window.innerWidth < 640 ? 6 : 8,
+              horizontalScrollbarSize: window.innerWidth < 640 ? 6 : 8,
             },
             bracketPairColorization: { enabled: true },
             guides: {
@@ -135,20 +135,28 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
               showKeywords: true,
               showSnippets: true,
             },
+            // Optimizaciones para móvil
+            contextmenu: window.innerWidth >= 640,
+            quickSuggestions: window.innerWidth >= 640,
+            parameterHints: { enabled: window.innerWidth >= 640 },
+            hover: { enabled: window.innerWidth >= 640 },
+            folding: window.innerWidth >= 640,
+            foldingStrategy: 'indentation',
+            showFoldingControls: window.innerWidth >= 640 ? 'always' : 'never',
           }}
         />
       </div>
 
       {/* Warnings */}
       {warnings && warnings.length > 0 && (
-        <div className="px-6 py-4 bg-yellow-950/30 border-t border-yellow-500/20 glass-subtle flex-shrink-0">
-          <div className="space-y-3">
+        <div className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 bg-yellow-950/30 border-t border-yellow-500/20 glass-subtle flex-shrink-0">
+          <div className="space-y-2 sm:space-y-3">
             {warnings.map((warning, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <AlertCircle className="h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+              <div key={index} className="flex items-start gap-2 sm:gap-3">
+                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
                 <div className="space-y-1 min-w-0">
-                  <div className="text-sm font-medium text-yellow-300">Advertencia</div>
-                  <div className="text-sm text-yellow-200 break-words">{warning.message}</div>
+                  <div className="text-xs sm:text-sm font-medium text-yellow-300">Advertencia</div>
+                  <div className="text-xs sm:text-sm text-yellow-200 break-words">{warning.message}</div>
                   <div className="text-xs text-yellow-400">
                     Línea {warning.location.start.line}, columna {warning.location.start.column}
                   </div>
@@ -161,12 +169,12 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
 
       {/* Error */}
       {error && (
-        <div className="px-6 py-4 bg-red-950/30 border-t border-red-500/20 glass-subtle flex-shrink-0">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+        <div className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 bg-red-950/30 border-t border-red-500/20 glass-subtle flex-shrink-0">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-400 mt-0.5 flex-shrink-0" />
             <div className="space-y-1 min-w-0">
-              <div className="text-sm font-medium text-red-300">Error de sintaxis</div>
-              <div className="text-sm text-red-200 break-words">{error.message}</div>
+              <div className="text-xs sm:text-sm font-medium text-red-300">Error de sintaxis</div>
+              <div className="text-xs sm:text-sm text-red-200 break-words">{error.message}</div>
               <div className="text-xs text-red-400">
                 Línea {error.location.start.line}, columna {error.location.start.column}
               </div>
