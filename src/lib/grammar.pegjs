@@ -191,7 +191,7 @@ Screen
   / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / Titulo / InvalidKeywordLine / Image / NonScreenText / InvalidOptionLine)*
+  = (Lista / Titulo / InvalidKeywordLine / NonScreenText / Image / InvalidOptionLine)*
 
 InvalidOptionLine
   = !"Image" !"Titul" !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
