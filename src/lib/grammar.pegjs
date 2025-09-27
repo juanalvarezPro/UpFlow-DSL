@@ -175,7 +175,7 @@ Screen
   / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / Titulo / Image / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
+  = (Lista / Titulo / InvalidKeywordLine / Image / NonScreenText / InvalidOptionLine)*
 
 InvalidOptionLine
   = !"Image" !"Titul" !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
@@ -190,7 +190,6 @@ InvalidKeywordLine
   / "Opcion" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Optional" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Opciones" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
-  / "Image" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Imagen'. Ejemplo: 'Imagen: mi imagen'"); }
   / "Titul" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Titulo'. Ejemplo: 'Titulo: mi titulo'"); }
 
 Text
@@ -204,21 +203,20 @@ Text
 
 Image
   = "Imagen" __ ":" __ src:QuotedTitle __ height:ImageHeight? __ {
-      // Si es una URL de R2, mantenerla para conversión posterior
-      // Si es base64, usar directamente
       return { 
         type: "Image", 
         src: src,
         height: height || 150
       };
     }
+  / "Image" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Imagen'. Ejemplo: 'Imagen: \"mi_imagen.jpg\"'"); }
 
 ImageHeight
   = [0-9]+ { return parseInt(text(), 10); }
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
 NonScreenText
-  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" line:TextLine __ {
+  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !"Image" !"Imagen" !"Titulo" !"Titul" line:TextLine __ {
       return { type: "TextParagraph", text: line };
     }
 
