@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from './ui/button';
 import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface MetaPlaygroundMockupProps {
   dslData?: unknown;
@@ -184,7 +185,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
         setFormData({}); // Limpiar formulario al cambiar de pantalla
       } else {
         // Si es la última pantalla, mostrar mensaje de éxito
-        alert('¡Flow completado exitosamente!');
+        toast.success('¡Flow completado exitosamente!');
       }
     }
   };
