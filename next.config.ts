@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
     // Ignorar errores de ESLint durante el build
     ignoreDuringBuilds: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'media.upflows.juanalvarez.pro',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
