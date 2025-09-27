@@ -8,13 +8,20 @@ import { Footer } from './ui/Footer';
 import { AutoSaveIndicator } from './ui/AutoSaveIndicator';
 import { Button } from './ui/button';
 import { ConfirmDialog } from './ui/ConfirmDialog';
-import { Trash2 } from 'lucide-react';
+import { WelcomeModal } from './WelcomeModal';
+import { useWelcomeModal } from '@/hooks/useWelcomeModal';
+import { GettingStartedAside } from './GettingStartedAside';
+import { AIGenerator } from './AIGenerator';
+import { Trash2, BookOpen, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
 export function MainLayout() {
   const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error, warnings, isAutoSaving, lastSaved, hasUnsavedChanges } = useDSLEditor();
   const [showClearDialog, setShowClearDialog] = useState(false);
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
+  const { isOpen: isWelcomeOpen, closeModal: closeWelcomeModal } = useWelcomeModal();
   
   const handleClearDSL = () => {
     setShowClearDialog(true);
@@ -26,6 +33,12 @@ export function MainLayout() {
       toast.success('DSL limpiado correctamente');
       window.location.reload(); // Recargar para resetear todo
     }
+  };
+
+  const handleAIGenerate = (prompt: string) => {
+    // Por ahora, solo mostrar un mensaje
+    toast.info('Funcionalidad de IA en desarrollo. Pronto podrás generar flows automáticamente!');
+    setShowAIGenerator(false);
   };
   
   return (
@@ -67,6 +80,26 @@ export function MainLayout() {
             </div>
             
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowAIGenerator(true)}
+                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-purple-500/10 border border-purple-500/20 hover:border-purple-400/30 transition-all duration-200 rounded-lg"
+                title="Generar flow con IA"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm font-medium">IA</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowGettingStarted(true)}
+                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+                title="Abrir guía de inicio"
+              >
+                <BookOpen className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm font-medium">Guía</span>
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -122,6 +155,34 @@ export function MainLayout() {
         cancelText="Cancelar"
         variant="destructive"
       />
+      
+      <WelcomeModal
+        isOpen={isWelcomeOpen}
+        onClose={closeWelcomeModal}
+      />
+      
+      <GettingStartedAside
+        isOpen={showGettingStarted}
+        onClose={() => setShowGettingStarted(false)}
+      />
+      
+      {/* AI Generator Modal */}
+      {showAIGenerator && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <AIGenerator onGenerate={handleAIGenerate} />
+            <div className="mt-4 flex justify-end">
+              <Button
+                variant="ghost"
+                onClick={() => setShowAIGenerator(false)}
+                className="text-slate-400 hover:text-slate-200"
+              >
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
