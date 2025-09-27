@@ -1,9 +1,10 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Image as ImageIcon } from 'lucide-react';
 import { useDSLEditorView } from '@/hooks/views/useDSLEditor.view';
 import { ValidationWarning } from '@/lib/validation';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import dynamic from 'next/dynamic';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
@@ -23,7 +24,8 @@ interface DSLEditorProps {
 }
 
 export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEditorProps) {
-  const { handleEditorDidMount, handleFormat } = useDSLEditorView({ onFormat: onFormat || (() => { }) });
+  const { handleEditorDidMount, handleFormat, handleImageUpload, handleImageCancel, showImageUpload, setShowImageUpload } = useDSLEditorView({ onFormat: onFormat || (() => { }), onChange: onChange });
+
 
   return (
     <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
@@ -33,15 +35,26 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
           <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50"></div>
           <h2 className="text-sm font-semibold text-slate-200">Editor DSL</h2>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleFormat}
-          className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
-        >
-          <RefreshCw className="h-4 w-4" />
-          <span className="text-sm font-medium">Formatear</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowImageUpload(true)}
+            className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+          >
+            <ImageIcon className="h-4 w-4" />
+            <span className="text-sm font-medium">Imagen</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleFormat}
+            className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/30 transition-all duration-200 rounded-lg"
+          >
+            <RefreshCw className="h-4 w-4" />
+            <span className="text-sm font-medium">Formatear</span>
+          </Button>
+        </div>
       </div>
 
       {/* Editor */}
@@ -90,11 +103,11 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
                 'scrollbarSlider.activeBackground': '#3B82F670',
               }
             });
-            
+
             editor.updateOptions({
               theme: 'upflows-dark'
             });
-            
+
             handleEditorDidMount(editor, monaco);
           }}
           options={{
@@ -160,6 +173,14 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
             </div>
           </div>
         </div>
+      )}
+
+      {/* Image Upload Modal */}
+      {showImageUpload && (
+        <ImageUpload
+          onImageUpload={handleImageUpload}
+          onCancel={handleImageCancel}
+        />
       )}
     </div>
   );
