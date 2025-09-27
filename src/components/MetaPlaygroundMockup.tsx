@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Button } from './ui/button';
-import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw } from 'lucide-react';
+import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code } from 'lucide-react';
 
 interface MetaPlaygroundMockupProps {
   dslData?: unknown;
@@ -67,6 +67,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [formData, setFormData] = useState<FormData>({});
   const [isPlaying, setIsPlaying] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Procesar datos del DSL para crear un preview funcional
   const processedData = useMemo(() => {
@@ -197,6 +198,22 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
     setIsPlaying(!isPlaying);
   };
 
+  const generateJSON = () => {
+    if (!processedData) return '';
+    return JSON.stringify(processedData, null, 2);
+  };
+
+  const copyJSONToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generateJSON());
+      setCopied(true);
+      // Resetear el estado después de 2 segundos
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error al copiar JSON:', err);
+    }
+  };
+
   // Verificar si el formulario está completo
   const isFormComplete = useMemo(() => {
     if (!currentScreen) return false;
@@ -243,6 +260,18 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
           <Button
             variant="ghost"
             size="sm"
+            onClick={copyJSONToClipboard}
+            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-2"
+            title={copied ? "Copiado listo" : "Copiar código"}
+          >
+            <Code className="h-4 w-4" />
+            <span className="text-xs">
+              {copied ? "Copiado listo" : "Copiar código"}
+            </span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={togglePlay}
             className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
           >
@@ -268,9 +297,9 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
         <div className="w-full max-w-sm">
           {/* Estado de error - Skeleton con pulse */}
           {error || !isValid ? (
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden animate-pulse">
+            <div className="glass rounded-2xl shadow-2xl overflow-hidden animate-pulse flex flex-col min-h-[500px]">
               {/* Header skeleton */}
-              <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-3 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="h-5 w-5 bg-slate-500 rounded"></div>
                   <div className="h-4 w-32 bg-slate-500 rounded"></div>
@@ -279,7 +308,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
               </div>
 
               {/* Content skeleton */}
-              <div className="p-4 space-y-4">
+              <div className="flex-1 p-4 space-y-4">
                 {/* Title skeleton */}
                 <div className="h-6 w-48 bg-slate-600 rounded mx-auto"></div>
                 
@@ -311,16 +340,16 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                 </div>
               </div>
 
-              {/* Footer skeleton */}
-              <div className="px-4 py-3 bg-slate-600/20 border-t border-slate-500/20">
+              {/* Footer skeleton - Altura fija */}
+              <div className="px-4 py-3 bg-slate-600/20 border-t border-slate-500/20 flex-shrink-0 h-16 flex items-center justify-center">
                 <div className="h-3 w-48 bg-slate-600 rounded mx-auto"></div>
               </div>
             </div>
           ) : (
             /* Mockup glassmorphism coherente con el proyecto */
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden">
+            <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[500px]">
             {/* Header de WhatsApp */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <X className="h-5 w-5 text-white" />
                 <h2 className="font-semibold text-white">{currentScreen.title}</h2>
@@ -329,7 +358,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
             </div>
 
             {/* Contenido con scroll */}
-            <div className="max-h-96 overflow-y-auto bg-slate-50/10 backdrop-blur-sm">
+            <div className="flex-1 overflow-y-auto bg-slate-50/10 backdrop-blur-sm">
               <div className="p-4 space-y-4">
                 {/* Contenido de texto */}
                 {currentScreen.layout?.children?.map((child: DSLChild, index: number) => {
@@ -430,8 +459,8 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-4 py-3 bg-slate-50/10 backdrop-blur-md border-t border-blue-500/20">
+            {/* Footer - Altura fija */}
+            <div className="px-4 py-3 bg-slate-50/10 backdrop-blur-md border-t border-blue-500/20 flex-shrink-0 h-16 flex items-center justify-center">
               <p className="text-xs text-white text-center">
                 Administrado por la empresa.{' '}
                 <span className="text-blue-300 font-medium">Más información</span>
