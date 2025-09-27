@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from './ui/button';
-import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code, Download, Loader2, ChevronDown } from 'lucide-react';
+import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code, Download, Loader2, ChevronDown, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
 
@@ -95,68 +95,10 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       return null;
     }
 
+    // Si no hay datos del DSL, retornar null para mostrar estado vacío
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!dslData || !(dslData as any).screens || (dslData as any).screens.length === 0) {
-      return {
-        screens: [
-          {
-            id: "cita",
-            title: "Agendamiento de CITA",
-            layout: {
-              type: "SingleColumnLayout",
-              children: [
-                { type: "TextSubheading", text: "Este es el titulo de cita" },
-                { type: "TextBody", text: "Selecciona el tipo de cita que necesitas" },
-                {
-                  type: "Form",
-                  name: "form_agendamiento",
-                  children: [
-                    {
-                      type: "Dropdown",
-                      label: "Seleccione tipo cita",
-                      name: "tipo_cita",
-                      required: true,
-                      "data-source": "${data.tipo_cita}"
-                    },
-                    {
-                      type: "Dropdown", 
-                      label: "Seleccione fecha",
-                      name: "fecha",
-                      required: true,
-                      "data-source": "${data.fecha}"
-                    },
-                    {
-                      type: "Footer",
-                      label: "Continuar",
-                      "on-click-action": {
-                        name: "navigate",
-                        next: { type: "screen", name: "confirmacion" }
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            data: {
-              tipo_cita: {
-                "__example__": [
-                  { id: "general", title: "Consulta General" },
-                  { id: "especializada", title: "Consulta Especializada" },
-                  { id: "laboratorio", title: "Examen de Laboratorio" },
-                  { id: "control_salud", title: "Control de Salud Preventivo" }
-                ]
-              },
-              fecha: {
-                "__example__": [
-                  { id: "2027_01_01", title: "Lunes, Ene 01 2027" },
-                  { id: "2027_01_02", title: "Martes, Ene 02 2027" },
-                  { id: "2027_01_03", title: "Miércoles, Ene 03 2027" }
-                ]
-              }
-            }
-          }
-        ]
-      };
+      return null;
     }
 
     // Procesar datos reales del DSL
@@ -410,54 +352,91 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       {/* Contenido Principal */}
       <div className="flex-1 p-6 flex justify-center relative z-0 overflow-hidden">
         <div className="w-full max-w-sm h-full flex flex-col">
-          {/* Estado de error - Skeleton con pulse */}
-          {error || !isValid ? (
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden animate-pulse flex flex-col min-h-[500px]">
-              {/* Header skeleton */}
-              <div className="bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
+          {/* Estado de error o sin datos */}
+          {error || !isValid || !processedData ? (
+            <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[500px]">
+              {/* Header de error */}
+              <div className={`px-4 py-3 flex items-center justify-between flex-shrink-0 ${
+                error || !isValid 
+                  ? 'bg-gradient-to-r from-red-600 to-red-700' 
+                  : 'bg-gradient-to-r from-slate-600 to-slate-700'
+              }`}>
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-5 bg-slate-500 rounded"></div>
-                  <div className="h-4 w-32 bg-slate-500 rounded"></div>
+                  <AlertTriangle className="h-5 w-5 text-white" />
+                  <h2 className="font-semibold text-white">
+                    {error || !isValid ? 'Error en el DSL' : 'DSL vacío'}
+                  </h2>
                 </div>
-                <div className="h-5 w-5 bg-slate-500 rounded"></div>
+                <X className="h-5 w-5 text-white" />
               </div>
 
-              {/* Content skeleton */}
-              <div className="flex-1 p-4 space-y-4">
-                {/* Title skeleton */}
-                <div className="h-6 w-48 bg-slate-600 rounded mx-auto"></div>
-                
-                {/* Text skeleton */}
-                <div className="h-4 w-64 bg-slate-600 rounded mx-auto"></div>
-                
-                {/* Image placeholder skeleton */}
-                <div className="w-full h-48 bg-slate-600 rounded-lg"></div>
-                
-                {/* Navigation text skeleton */}
-                <div className="h-4 w-40 bg-slate-600 rounded mx-auto"></div>
-                
-                {/* Form skeleton */}
-                <div className="space-y-4">
-                  {/* Label skeleton */}
-                  <div className="h-4 w-32 bg-slate-600 rounded"></div>
-                  
-                  {/* Dropdown skeleton */}
-                  <div className="h-12 w-full bg-slate-600 rounded-lg"></div>
-                  
-                  {/* Label skeleton */}
-                  <div className="h-4 w-28 bg-slate-600 rounded"></div>
-                  
-                  {/* Dropdown skeleton */}
-                  <div className="h-12 w-full bg-slate-600 rounded-lg"></div>
-                  
-                  {/* Button skeleton */}
-                  <div className="h-12 w-full bg-slate-600 rounded-lg"></div>
+              {/* Contenido de error o sin datos */}
+              <div className="flex-1 p-6 flex flex-col items-center justify-center space-y-6">
+                {/* Icono de error grande */}
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center ${
+                  error || !isValid 
+                    ? 'bg-red-500/20' 
+                    : 'bg-slate-500/20'
+                }`}>
+                  <AlertTriangle className={`h-10 w-10 ${
+                    error || !isValid 
+                      ? 'text-red-400' 
+                      : 'text-slate-400'
+                  }`} />
                 </div>
+                
+                {/* Mensaje principal */}
+                <div className="text-center space-y-1">
+                  <h3 className="text-xl font-bold text-white">
+                    {error || !isValid ? '¡Ups! Te equivocaste!' : 'El DSL está vacío'}
+                  </h3>
+                  <p className="text-slate-300 leading-relaxed">
+                    {error || !isValid 
+                      ? 'Revisa en nuestro compilador de sintaxis natural.'
+                      : 'Comienza escribiendo tu código DSL en el editor para ver la vista previa aquí.'
+                    }
+                  </p>
+                </div>
+                
+                {/* Detalles del error */}
+                {error && (
+                  <div className="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-red-300 mb-2">
+                          🔍 Error
+                        </p>
+                          <p className="text-sm text-red-200/90 break-words font-mono leading-relaxed">
+                            {error}
+                          </p>
+                        <p className="text-xs text-red-300/70 mt-2">
+                          💡 Este es el error exacto que encontró nuestro compilador de sintaxis natural
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Instrucciones */}
               </div>
 
-              {/* Footer skeleton - Altura fija */}
-              <div className="px-4 py-3 bg-slate-600/20 border-t border-slate-500/20 flex-shrink-0 h-16 flex items-center justify-center">
-                <div className="h-3 w-48 bg-slate-600 rounded mx-auto"></div>
+              {/* Footer de error o sin datos */}
+              <div className={`px-4 py-3 border-t flex-shrink-0 h-16 flex items-center justify-center ${
+                error || !isValid 
+                  ? 'bg-red-500/10 border-red-500/20' 
+                  : 'bg-slate-500/10 border-slate-500/20'
+              }`}>
+                <p className={`text-xs text-center ${
+                  error || !isValid 
+                    ? 'text-red-300' 
+                    : 'text-slate-300'
+                }`}>
+                  {error || !isValid 
+                    ? 'Usa nuestro compilador de sintaxis natural para corregir el error'
+                    : 'Escribe tu código DSL para ver la vista previa aquí'
+                  }
+                </p>
               </div>
             </div>
           ) : (

@@ -10,9 +10,10 @@ import { Button } from './ui/button';
 interface JSONPreviewProps {
   data: unknown;
   isValid: boolean;
+  error?: string | null;
 }
 
-export function JSONPreview({ data, isValid }: JSONPreviewProps) {
+export function JSONPreview({ data, isValid, error }: JSONPreviewProps) {
   const { handleCopy, formatJSONWithTooltips, copied, isConverting } = useJSONPreview({ data });
   const [viewMode, setViewMode] = useState<'json' | 'preview'>('preview');
 
@@ -57,7 +58,7 @@ export function JSONPreview({ data, isValid }: JSONPreviewProps) {
       {/* Content */}
       <div className="flex-1 min-h-0 overflow-hidden">
         {viewMode === 'preview' ? (
-          <MetaPlaygroundMockup dslData={data} />
+          <MetaPlaygroundMockup dslData={data} error={error} isValid={isValid} />
         ) : (
           <div className="h-full bg-slate-950/30 p-6 overflow-auto">
             <div className="json-preview-container text-sm font-mono text-slate-200 whitespace-pre-wrap leading-relaxed">
