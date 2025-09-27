@@ -52,11 +52,17 @@ export function MainLayout() {
                 <p className="text-sm text-slate-300/80">
                   Crea Flows de Whatsapp Meta con sintaxis natural
                 </p>
-                <AutoSaveIndicator 
-                  isAutoSaving={isAutoSaving}
-                  lastSaved={lastSaved}
-                  hasUnsavedChanges={hasUnsavedChanges}
-                />
+                {error ? (
+                  <div className="text-red-400 text-sm font-medium">
+                    No se puede guardar: hay errores de sintaxis
+                  </div>
+                ) : (
+                  <AutoSaveIndicator 
+                    isAutoSaving={isAutoSaving}
+                    lastSaved={lastSaved}
+                    hasUnsavedChanges={hasUnsavedChanges}
+                  />
+                )}
               </div>
             </div>
             

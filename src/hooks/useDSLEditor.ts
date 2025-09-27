@@ -44,8 +44,26 @@ interface ParseResult {
 const DEFAULT_DSL_VALUE = DEFAULT_DSL;
 
 export function useDSLEditor() {
-  const { dslContent, updateDslContent, isAutoSaving, lastSaved, hasUnsavedChanges } = useDSLPersistence(DEFAULT_DSL_VALUE);
-  const [dslValue, setDSLValue] = useState(dslContent);
+  const [dslValue, setDSLValue] = useState(DEFAULT_DSL_VALUE);
+  
+  // Calcular si hay errores antes de pasar al hook de persistencia
+  const hasErrors = useMemo(() => {
+    if (!dslValue.trim()) return false;
+    
+    try {
+      const processedDSL = dslValue
+        .split('\n')
+        .map(line => line.trim().startsWith('//') ? '' : line)
+        .join('\n');
+      
+      parse(processedDSL, {});
+      return false; // No hay errores
+    } catch (error) {
+      return true; // Hay errores
+    }
+  }, [dslValue]);
+
+  const { dslContent, updateDslContent, isAutoSaving, lastSaved, hasUnsavedChanges, isInitialized } = useDSLPersistence(DEFAULT_DSL_VALUE, hasErrors);
 
   const parseResult = useMemo((): ParseResult => {
     if (!dslValue.trim()) {
@@ -119,10 +137,12 @@ export function useDSLEditor() {
     }
   }, [dslValue]);
 
-  // Sincronizar con el contenido persistido
+  // Sincronizar con el contenido persistido cuando esté inicializado
   useEffect(() => {
-    setDSLValue(dslContent);
-  }, [dslContent]);
+    if (isInitialized && dslContent) {
+      setDSLValue(dslContent);
+    }
+  }, [dslContent, isInitialized]);
 
   const handleDSLChange = useCallback((newValue: string) => {
     setDSLValue(newValue);

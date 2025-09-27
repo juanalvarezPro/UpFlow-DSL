@@ -25,7 +25,7 @@ interface DSLEditorProps {
 
 export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEditorProps) {
   const { handleEditorDidMount, handleFormat, handleImageUpload, handleImageCancel, showImageUpload, setShowImageUpload } = useDSLEditorView({ onFormat: onFormat || (() => { }), onChange: onChange });
-
+  
 
   return (
     <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
