@@ -12,7 +12,7 @@ import { WelcomeModal } from './WelcomeModal';
 import { useWelcomeModal } from '@/hooks/useWelcomeModal';
 import { GettingStartedAside } from './GettingStartedAside';
 import { AIGenerator } from './AIGenerator';
-import { Trash2, BookOpen, Sparkles } from 'lucide-react';
+import { Trash2, BookOpen, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
@@ -168,18 +168,26 @@ export function MainLayout() {
       
       {/* AI Generator Modal */}
       {showAIGenerator && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAIGenerator(false);
+            }
+          }}
+        >
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
             <AIGenerator onGenerate={handleAIGenerate} />
-            <div className="mt-4 flex justify-end">
-              <Button
-                variant="ghost"
-                onClick={() => setShowAIGenerator(false)}
-                className="text-slate-400 hover:text-slate-200"
-              >
-                Cerrar
-              </Button>
-            </div>
+            {/* Close button positioned inside modal */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAIGenerator(false)}
+              className="absolute top-4 right-4 z-20 w-8 h-8 p-0 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 hover:border-slate-500/50 text-slate-300 hover:text-slate-100 rounded-full transition-all duration-200"
+              title="Cerrar modal"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}
