@@ -2,7 +2,7 @@
 
 export function Footer() {
   return (
-    <footer className="glass-strong border-t border-blue-500/20 relative z-10">
+    <footer className="fixed bottom-0 h-16 w-full glass-strong border-t border-blue-500/20 relative z-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-center text-sm gap-4 text-slate-300/80">
           <div className="flex items-center gap-2">

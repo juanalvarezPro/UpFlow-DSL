@@ -115,7 +115,7 @@ export function MainLayout() {
       </header>
       
       {/* Main Content */}
-      <main className="flex flex-col lg:flex-row p-4 gap-4 relative z-10 min-h-0">
+      <main className="flex flex-col lg:flex-row p-4 gap-4 relative z-10 h-[calc(100vh-100px)]">
         {/* Editor DSL */}
         <div className="flex-1 min-h-0">
           <DSLEditor
@@ -132,6 +132,7 @@ export function MainLayout() {
           <JSONPreview
             data={jsonData}
             isValid={isValid}
+            error={error?.message || null}
           />
         </div>
       </main>
