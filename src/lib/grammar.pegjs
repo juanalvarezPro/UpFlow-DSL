@@ -142,12 +142,14 @@ Screen
 
       // Construir children del layout manteniendo el orden original
       const layoutChildren = content
-        .filter(c => c.type === "TextParagraph" || c.type === "TextSubheading")
+        .filter(c => c.type === "TextParagraph" || c.type === "TextSubheading" || c.type === "Image")
         .map(c => {
           if (c.type === "TextParagraph") {
             return { type: "TextBody", text: c.text };
           } else if (c.type === "TextSubheading") {
             return { type: "TextSubheading", text: c.text };
+          } else if (c.type === "Image") {
+            return { type: "Image", src: c.src, height: c.height };
           }
         });
       
@@ -173,7 +175,7 @@ Screen
   / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / Titulo / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
+  = (Lista / Titulo / Image / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
 
 InvalidOptionLine
   = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
@@ -188,6 +190,8 @@ InvalidKeywordLine
   / "Opcion" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Optional" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Opciones" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
+  / "Image" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Imagen'. Ejemplo: 'Imagen: mi imagen'"); }
+  / "Titul" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Titulo'. Ejemplo: 'Titulo: mi titulo'"); }
 
 Text
   = line:TextLine __ {
@@ -197,6 +201,20 @@ Text
   = "Titulo" __ ":" __ title:TextLine __ {
       return { type: "TextSubheading", text: title };
     }
+
+Image
+  = "Imagen" __ ":" __ src:QuotedTitle __ height:ImageHeight? __ {
+      // Si es una URL de R2, mantenerla para conversión posterior
+      // Si es base64, usar directamente
+      return { 
+        type: "Image", 
+        src: src,
+        height: height || 150
+      };
+    }
+
+ImageHeight
+  = [0-9]+ { return parseInt(text(), 10); }
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
 NonScreenText
