@@ -18,7 +18,12 @@
     // Buscar patrón "Ir a pantalla [Nombre]"
     const match = text.match(/Ir a pantalla\s+(.+)/i);
     if (match) {
-      return makeScreenId(match[1].trim());
+      const screenName = match[1].trim();
+      // Validar que el nombre de pantalla no esté vacío
+      if (screenName.length === 0) {
+        error("Error: 'Ir a pantalla' debe ir seguido del nombre de la pantalla. Ejemplo: 'Ir a pantalla Mi Pantalla'");
+      }
+      return makeScreenId(screenName);
     }
     return null;
   }
