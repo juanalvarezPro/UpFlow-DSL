@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from './ui/button';
 import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code, Download, Loader2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface MetaPlaygroundMockupProps {
   dslData?: unknown;
@@ -33,6 +34,8 @@ interface TextBodyChild extends BaseChild {
 interface ImageChild extends BaseChild {
   type: "Image";
   src: string;
+  width?: number;
+  height?: number;
 }
 
 interface FormChild extends BaseChild {
@@ -157,7 +160,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
     }
 
     // Procesar datos reales del DSL
-    return {
+    const processed = {
       ...dslData,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       screens: (dslData as any).screens.map((screen: any) => ({
@@ -169,6 +172,12 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
         }
       }))
     };
+    
+    // Debug: Log para verificar que el height se está pasando correctamente
+    console.log('DSL Data recibido:', dslData);
+    console.log('Processed Data:', processed);
+    
+    return processed;
   }, [dslData, error, isValid]);
 
   const currentScreen = processedData?.screens?.[currentScreenIndex];
@@ -491,13 +500,32 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                     );
                   }
                   if (child.type === "Image") {
+                    // Debug: Log para verificar los valores de la imagen
+                    console.log('Imagen child:', child);
+                    console.log('Width:', child.width, 'Height:', child.height);
+                    
                     return (
-                      <div key={index} className="relative w-full">
-                        <div className="w-full h-40 bg-gradient-to-br from-blue-400/20 to-blue-500/20 backdrop-blur-sm rounded-lg flex items-center justify-center overflow-hidden border border-blue-500/20">
-                          <img 
-                            src={child.src} 
+                      <div key={index} className="relative">
+                        <div 
+                          className="bg-gradient-to-br from-blue-400/20 to-blue-500/20 backdrop-blur-sm rounded-lg flex items-center justify-center overflow-hidden border border-blue-500/20"
+                          style={{
+                            width: child.width ? `${child.width}px` : '100%',
+                            height: child.height ? `${child.height}px` : '160px'
+                          }}
+                        >
+                          <Image 
+                            src={child.src}
+                            width={child.width || 400}
+                            height={child.height || 160}
                             alt="Imagen del flow"
-                            className="w-full h-full object-cover rounded-lg"
+                            className="rounded-lg"
+                            style={{
+                              width: child.width ? `${child.width}px` : 'auto',
+                              height: child.height ? `${child.height}px` : 'auto',
+                              maxWidth: '100%',
+                              maxHeight: '100%',
+                              objectFit: 'contain'
+                            }}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               // Mostrar placeholder cuando falla la imagen
