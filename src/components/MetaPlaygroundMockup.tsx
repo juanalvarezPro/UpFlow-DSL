@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from './ui/button';
-import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code, List, Eye, Download, Loader2 } from 'lucide-react';
+import { X, MoreVertical, ArrowRight, Smartphone, Play, Pause, RotateCcw, Code, Download, Loader2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface MetaPlaygroundMockupProps {
@@ -69,8 +69,21 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
   const [formData, setFormData] = useState<FormData>({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showAllScreens, setShowAllScreens] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [showScreenOptions, setShowScreenOptions] = useState(false);
+
+  // Cerrar dropdowns al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.dropdown-container')) {
+        setShowScreenOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Procesar datos del DSL para crear un preview funcional
   const processedData = useMemo(() => {
@@ -165,11 +178,6 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
   };
 
   const handleContinue = () => {
-    // Volver a la vista individual si estamos en vista de todas las pantallas
-    if (showAllScreens) {
-      setShowAllScreens(false);
-    }
-
     // Buscar el botón Footer en el formulario actual para obtener la acción de navegación
     const form = currentScreen?.layout?.children?.find((child: DSLChild): child is FormChild => child.type === "Form");
     const footerButton = form?.children?.find((child: FormElementChild): child is FooterChild => child.type === "Footer");
@@ -203,7 +211,6 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
   };
 
   const togglePlay = () => {
-    setShowAllScreens(false);
     setIsPlaying(!isPlaying);
   };
 
@@ -271,7 +278,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       </div>
 
       {/* Header del Preview */}
-      <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between relative z-10">
+      <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between relative z-50">
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 rounded-full shadow-lg ${
             error || !isValid 
@@ -281,66 +288,109 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
           <div className="text-white text-sm font-medium">
             {error || !isValid ? 'Error en el DSL' : 'Vista Previa Interactiva'}
           </div>
-          {!error && isValid && processedData && (
-            <div className="text-xs text-blue-200">
-              {currentScreenIndex + 1} de {processedData.screens.length}
-            </div>
-          )}
         </div>
         
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowAllScreens(!showAllScreens)}
-            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
-            title={showAllScreens ? "Vista individual" : "Ver todas las pantallas"}
-          >
-            {showAllScreens ? <Eye className="h-4 w-4" /> : <List className="h-4 w-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={copyJSONToClipboard}
-            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-2"
-            title={copied ? "Copiado listo" : "Copiar código"}
-          >
-            <Code className="h-4 w-4" />
-            <span className="text-xs">
-              {copied ? "Copiado listo" : "Copiar código"}
-            </span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={togglePlay}
-            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
-          >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={resetPreview}
-            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleExport}
-            disabled={isExporting || !processedData}
-            className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-2"
-            title="Exportar JSON"
-          >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            <span className="text-xs">Exportar</span>
-          </Button>
+          {/* Botones de control */}
+          {!error && isValid && processedData && (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={togglePlay}
+                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                title={isPlaying ? "Pausar" : "Ejecutar"}
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetPreview}
+                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20"
+                title="Reiniciar"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          
+          {/* Botón de opciones de pantallas */}
+          {!error && isValid && processedData && processedData.screens.length > 1 && (
+            <div className="relative dropdown-container">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowScreenOptions(!showScreenOptions)}
+                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 flex items-center gap-2"
+                title="Seleccionar pantalla"
+              >
+                <span className="text-xs">
+                  {processedData.screens[currentScreenIndex]?.title || `Pantalla ${currentScreenIndex + 1}`}
+                </span>
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+              
+              {showScreenOptions && (
+                <div className="absolute top-full right-0 mt-1 w-64 bg-slate-900/95 backdrop-blur-md border border-blue-500/30 rounded-lg shadow-2xl z-[100]">
+                  <div className="p-2">
+                    <div className="text-xs text-blue-300 mb-2 px-2 font-medium">Seleccionar pantalla:</div>
+                    {processedData.screens.map((screen: { id: string; title: string }, index: number) => (
+                      <button
+                        key={screen.id}
+                        onClick={() => {
+                          setCurrentScreenIndex(index);
+                          setShowScreenOptions(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                          index === currentScreenIndex
+                            ? 'bg-blue-600/40 text-white border border-blue-500/30'
+                            : 'text-slate-200 hover:text-white hover:bg-blue-500/20 border border-transparent'
+                        }`}
+                      >
+                        <div className="font-medium">{screen.title}</div>
+                        <div className="text-xs text-blue-300">Pantalla {index + 1}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Botones de opciones */}
+          {!error && isValid && processedData && (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={copyJSONToClipboard}
+                className={`border border-blue-500/20 ${
+                  copied 
+                    ? 'text-green-400 bg-green-500/20' 
+                    : 'text-slate-300 hover:text-white hover:bg-blue-500/20'
+                }`}
+                title={copied ? "¡Copiado!" : "Copiar código"}
+              >
+                <Code className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleExport}
+                disabled={isExporting || !processedData}
+                className="text-slate-300 hover:text-white hover:bg-blue-500/20 border border-blue-500/20 disabled:opacity-50"
+                title="Exportar"
+              >
+                {isExporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+              </Button>
+            </>
+          )}
+          
           <div className="glass-subtle rounded-lg px-3 py-2 flex items-center gap-2">
             <Smartphone className="h-4 w-4 text-blue-300" />
             <span className="text-sm font-medium text-white">WhatsApp Business</span>
@@ -349,115 +399,8 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       </div>
 
       {/* Contenido Principal */}
-      <div className="flex-1 p-6 flex justify-center relative z-10 overflow-hidden">
+      <div className="flex-1 p-6 flex justify-center relative z-0 overflow-hidden">
         <div className="w-full max-w-sm h-full flex flex-col">
-          {/* Vista de todas las pantallas */}
-          {showAllScreens && !error && isValid && processedData && (
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-              {processedData.screens.map((screen: unknown, index: number) => {
-                const screenData = screen as { title: string; layout?: { children?: DSLChild[] } };
-                return (
-                <div key={index} className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[400px]">
-                  {/* Header de WhatsApp */}
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
-                    <div className="flex items-center gap-3">
-                      <X className="h-5 w-5 text-white" />
-                      <h2 className="font-semibold text-white">{screenData.title}</h2>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-blue-200">Pantalla {index + 1}</span>
-                      <MoreVertical className="h-5 w-5 text-white" />
-                    </div>
-                  </div>
-
-                  {/* Contenido */}
-                  <div className="flex-1 overflow-y-auto bg-slate-50/10 backdrop-blur-sm">
-                    <div className="p-4 space-y-4">
-                      {/* Renderizar contenido de la pantalla */}
-                      {screenData.layout?.children?.map((child: DSLChild, childIndex: number) => {
-                        if (child.type === "TextSubheading") {
-                          return (
-                            <h1 key={childIndex} className="text-lg font-semibold text-white text-center">
-                              {child.text}
-                            </h1>
-                          );
-                        }
-                        if (child.type === "TextBody") {
-                          return (
-                            <p key={childIndex} className="text-sm text-blue-100 text-center">
-                              {child.text}
-                            </p>
-                          );
-                        }
-                        if (child.type === "Image") {
-                          return (
-                            <div key={childIndex} className="relative">
-                              <div className="w-full h-32 bg-gradient-to-br from-blue-400/20 to-blue-500/20 backdrop-blur-sm rounded-lg flex items-center justify-center overflow-hidden border border-blue-500/20">
-                                <img 
-                                  src={child.src} 
-                                  alt="Imagen"
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-
-                      {/* Formulario estático */}
-                      {screenData.layout?.children?.find((child: DSLChild): child is FormChild => child.type === "Form") && (
-                        <div className="space-y-4">
-                          {screenData.layout.children
-                            .find((child: DSLChild): child is FormChild => child.type === "Form")
-                            ?.children?.map((formChild: FormElementChild, formIndex: number) => {
-                              if (formChild.type === "Dropdown") {
-                                return (
-                                  <div key={formIndex} className="space-y-2">
-                                    <label className="text-sm font-medium text-white">
-                                      {formChild.label}
-                                    </label>
-                                    <div className="relative">
-                                      <div className="w-full px-3 py-3 bg-white/40 backdrop-blur-md border border-blue-400/30 rounded-lg text-sm text-slate-900">
-                                        Seleccionar...
-                                      </div>
-                                      <ArrowRight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              if (formChild.type === "Footer") {
-                                return (
-                                  <div key={formIndex} className="pt-2">
-                                    <div className="w-full py-3 rounded-lg font-medium bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 text-center">
-                                      {formChild.label}
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            })}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Footer - Altura fija */}
-                  <div className="px-4 py-3 bg-slate-50/10 backdrop-blur-md border-t border-blue-500/20 flex-shrink-0 h-16 flex items-center justify-center">
-                    <p className="text-xs text-white text-center">
-                      Administrado por la empresa.{' '}
-                      <span className="text-blue-300 font-medium">Más información</span>
-                    </p>
-                  </div>
-                </div>
-                );
-              })}
-            </div>
-          )}
-
           {/* Estado de error - Skeleton con pulse */}
           {error || !isValid ? (
             <div className="glass rounded-2xl shadow-2xl overflow-hidden animate-pulse flex flex-col min-h-[500px]">
@@ -508,7 +451,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                 <div className="h-3 w-48 bg-slate-600 rounded mx-auto"></div>
               </div>
             </div>
-          ) : !showAllScreens ? (
+          ) : (
             /* Mockup glassmorphism coherente con el proyecto */
             <div className="glass rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full">
             {/* Header de WhatsApp */}
@@ -527,14 +470,14 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                 {currentScreen.layout?.children?.map((child: DSLChild, index: number) => {
                   if (child.type === "TextSubheading") {
                     return (
-                      <h1 key={index} className="text-lg font-semibold text-white text-center">
+                      <h1 key={index} className="text-xl font-bold text-white text-center mb-3">
                         {child.text}
                       </h1>
                     );
                   }
                   if (child.type === "TextBody") {
                     return (
-                      <p key={index} className="text-sm text-blue-100 text-center">
+                      <p key={index} className="text-sm text-slate-100 text-center leading-relaxed mb-3">
                         {child.text}
                       </p>
                     );
@@ -560,7 +503,14 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                               // Mostrar placeholder cuando falla la imagen
                               const placeholder = e.currentTarget.parentElement;
                               if (placeholder) {
-                                placeholder.innerHTML = '<div class="flex items-center justify-center text-blue-300 text-sm">Imagen no disponible</div>';
+                                placeholder.innerHTML = `
+                                  <div class="flex flex-col items-center justify-center text-blue-300 text-sm">
+                                    <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Imagen no disponible</span>
+                                  </div>
+                                `;
                               }
                             }}
                           />
@@ -635,14 +585,14 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
               </p>
             </div>
           </div>
-          ) : null}
+          )}
         </div>
       </div>
 
 
-      {/* Indicadores de navegación - Solo en vista individual */}
-      {!error && isValid && processedData && !showAllScreens && (
-        <div className="flex justify-center mt-4 space-x-2 relative z-10">
+      {/* Indicadores de navegación */}
+      {!error && isValid && processedData && (
+        <div className="flex justify-center mt-4 space-x-2 relative z-0">
           {processedData.screens.map((_: unknown, index: number) => (
           <div 
             key={index}
