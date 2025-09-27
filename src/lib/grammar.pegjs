@@ -43,6 +43,13 @@ Flow
           error("Error: La pantalla '" + referencedScreen + "' es referenciada pero no existe. Debe crear esta pantalla en el flujo.");
         }
       }
+      
+      // Marcar la última pantalla como terminal
+      if (screens.length > 0) {
+        const lastScreen = screens[screens.length - 1];
+        lastScreen.terminal = true;
+      }
+      
       return { version: "6.0", screens };
     }
   / __ screen:Screen _ {
@@ -53,6 +60,10 @@ Flow
           error("Error: La pantalla '" + referencedScreen + "' es referenciada pero no existe. Debe crear esta pantalla en el flujo.");
         }
       }
+      
+      // Marcar la pantalla como terminal
+      screen.terminal = true;
+      
       return { version: "6.0", screens: [screen] };
     }
   / _ { error("Error: El DSL debe contener al menos una pantalla. Ejemplo: 'Pantalla Mi Pantalla:'"); }
