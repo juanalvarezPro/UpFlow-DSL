@@ -9,7 +9,7 @@ interface JSONPreviewProps {
 }
 
 export function JSONPreview({ data, isValid }: JSONPreviewProps) {
-  const { handleCopy, formatJSON, copied } = useJSONPreview({ data });
+  const { handleCopy, formatJSON, formatJSONWithTooltips, copied, isConverting } = useJSONPreview({ data });
 
   return (
     <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
@@ -19,7 +19,7 @@ export function JSONPreview({ data, isValid }: JSONPreviewProps) {
           <div className={`w-2 h-2 rounded-full shadow-lg ${isValid ? 'bg-green-400 shadow-green-400/50' : 'bg-red-400 shadow-red-400/50'}`}></div>
           <h2 className="text-sm font-semibold text-slate-200">JSON Generado</h2>
           <span className={`text-xs px-3 py-1.5 rounded-lg font-medium glass-subtle border ${isValid ? 'text-green-300 border-green-500/30' : 'text-red-300 border-red-500/30'}`}>
-            {isValid ? "Válido" : "Inválido"}
+            {isConverting ? "Convirtiendo..." : (isValid ? "Válido" : "Inválido")}
           </span>
         </div>
         <CopyButton handleCopy={handleCopy} isValid={isValid} copied={copied} />
@@ -28,9 +28,9 @@ export function JSONPreview({ data, isValid }: JSONPreviewProps) {
       {/* JSON Content */}
       <div className="flex-1 min-h-0 overflow-hidden">
         <div className="h-full bg-slate-950/30 p-6 overflow-auto">
-          <pre className="text-sm font-mono text-slate-200 whitespace-pre-wrap leading-relaxed">
-            {isValid ? formatJSON(data) : '// Error: No se puede generar JSON válido'}
-          </pre>
+          <div className="text-sm font-mono text-slate-200 whitespace-pre-wrap leading-relaxed">
+            {isValid ? formatJSONWithTooltips(data) : '// Error: No se puede generar JSON válido'}
+          </div>
         </div>
       </div>
     </div>
