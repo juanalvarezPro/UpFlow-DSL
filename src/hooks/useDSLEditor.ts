@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 // @ts-expect-error: parser may not be a module, but we still want to import for runtime
 import * as parserModule from '@/lib/parser';
 const parse = parserModule.parse;
 const SyntaxError = parserModule.SyntaxError;
 import { DEFAULT_DSL } from '@/constants/defaultDSL';
 import { validateDSL, ValidationWarning } from '@/lib/validation';
+import { useDSLPersistence } from './useDSLPersistence';
 
 
 
@@ -43,7 +44,8 @@ interface ParseResult {
 const DEFAULT_DSL_VALUE = DEFAULT_DSL;
 
 export function useDSLEditor() {
-  const [dslValue, setDSLValue] = useState(DEFAULT_DSL_VALUE);
+  const { dslContent, updateDslContent, isAutoSaving, lastSaved, hasUnsavedChanges } = useDSLPersistence(DEFAULT_DSL_VALUE);
+  const [dslValue, setDSLValue] = useState(dslContent);
 
   const parseResult = useMemo((): ParseResult => {
     if (!dslValue.trim()) {
@@ -117,9 +119,15 @@ export function useDSLEditor() {
     }
   }, [dslValue]);
 
+  // Sincronizar con el contenido persistido
+  useEffect(() => {
+    setDSLValue(dslContent);
+  }, [dslContent]);
+
   const handleDSLChange = useCallback((newValue: string) => {
     setDSLValue(newValue);
-  }, []);
+    updateDslContent(newValue);
+  }, [updateDslContent]);
 
   const handleFormat = useCallback(() => {
     // Función simple de formateo
@@ -140,6 +148,9 @@ export function useDSLEditor() {
     isValid: parseResult.success,
     jsonData: parseResult.success ? parseResult.data : null,
     error: parseResult.success ? null : parseResult.error,
-    warnings: parseResult.warnings
+    warnings: parseResult.warnings,
+    isAutoSaving,
+    lastSaved,
+    hasUnsavedChanges
   };
 }
