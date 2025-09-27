@@ -6,6 +6,7 @@ import { useDSLEditorView } from '@/hooks/views/useDSLEditor.view';
 import { ValidationWarning } from '@/lib/validation';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -25,6 +26,23 @@ interface DSLEditorProps {
 
 export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEditorProps) {
   const { handleEditorDidMount, handleFormat, handleImageUpload, handleImageCancel, showImageUpload, setShowImageUpload } = useDSLEditorView({ onFormat: onFormat || (() => { }), onChange: onChange });
+  
+  // Hook para detectar el tamaño de la pantalla de manera segura
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    // Verificar en el cliente
+    checkIsMobile();
+    
+    // Escuchar cambios de tamaño
+    window.addEventListener('resize', checkIsMobile);
+    
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
   
 
   return (
@@ -112,19 +130,19 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
           }}
           options={{
             minimap: { enabled: false },
-            fontSize: window.innerWidth < 640 ? 14 : 15,
+            fontSize: isMobile ? 14 : 15,
             lineNumbers: 'on',
             wordWrap: 'on',
             automaticLayout: true,
             fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace',
-            lineHeight: window.innerWidth < 640 ? 1.4 : 1.6,
-            padding: { top: window.innerWidth < 640 ? 15 : 20, bottom: window.innerWidth < 640 ? 15 : 20 },
+            lineHeight: isMobile ? 1.4 : 1.6,
+            padding: { top: isMobile ? 15 : 20, bottom: isMobile ? 15 : 20 },
             cursorStyle: 'line',
             renderLineHighlight: 'line',
             mouseWheelZoom: true,
             scrollbar: {
-              verticalScrollbarSize: window.innerWidth < 640 ? 6 : 8,
-              horizontalScrollbarSize: window.innerWidth < 640 ? 6 : 8,
+              verticalScrollbarSize: isMobile ? 6 : 8,
+              horizontalScrollbarSize: isMobile ? 6 : 8,
             },
             bracketPairColorization: { enabled: true },
             guides: {
@@ -136,13 +154,13 @@ export function DSLEditor({ value, onChange, error, warnings, onFormat }: DSLEdi
               showSnippets: true,
             },
             // Optimizaciones para móvil
-            contextmenu: window.innerWidth >= 640,
-            quickSuggestions: window.innerWidth >= 640,
-            parameterHints: { enabled: window.innerWidth >= 640 },
-            hover: { enabled: window.innerWidth >= 640 },
-            folding: window.innerWidth >= 640,
+            contextmenu: !isMobile,
+            quickSuggestions: !isMobile,
+            parameterHints: { enabled: !isMobile },
+            hover: { enabled: !isMobile },
+            folding: !isMobile,
             foldingStrategy: 'indentation',
-            showFoldingControls: window.innerWidth >= 640 ? 'always' : 'never',
+            showFoldingControls: !isMobile ? 'always' : 'never',
           }}
         />
       </div>
