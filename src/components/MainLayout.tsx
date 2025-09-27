@@ -5,9 +5,28 @@ import { JSONPreview } from './JSONPreview';
 import { useDSLEditor } from '@/hooks/useDSLEditor';
 import { GitHubStarsButton } from './ui/GitHubStarsButton';
 import { Footer } from './ui/Footer';
+import { AutoSaveIndicator } from './ui/AutoSaveIndicator';
+import { Button } from './ui/button';
+import { ConfirmDialog } from './ui/ConfirmDialog';
+import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 export function MainLayout() {
-  const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error, warnings } = useDSLEditor();
+  const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error, warnings, isAutoSaving, lastSaved, hasUnsavedChanges } = useDSLEditor();
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  
+  const handleClearDSL = () => {
+    setShowClearDialog(true);
+  };
+
+  const confirmClearDSL = () => {
+    if (typeof window !== 'undefined' && localStorage) {
+      localStorage.removeItem('upflows_dsl_content');
+      toast.success('DSL limpiado correctamente');
+      window.location.reload(); // Recargar para resetear todo
+    }
+  };
   
   return (
     <div className="h-screen flex flex-col bg-blue-blur relative overflow-hidden">
@@ -29,14 +48,34 @@ export function MainLayout() {
                   UpFlows! DSL
                 </h1>
               </div>
-              <p className="hidden sm:block text-sm text-slate-300/80">
-                Crea Flows de Whatsapp Meta con sintaxis natural
-              </p>
+              <div className="hidden sm:flex flex-col">
+                <p className="text-sm text-slate-300/80">
+                  Crea Flows de Whatsapp Meta con sintaxis natural
+                </p>
+                <AutoSaveIndicator 
+                  isAutoSaving={isAutoSaving}
+                  lastSaved={lastSaved}
+                  hasUnsavedChanges={hasUnsavedChanges}
+                />
+              </div>
             </div>
             
-            <GitHubStarsButton 
-              repoUrl="https://github.com/juanalvarezPro/UpFlow-DSL"
-            />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearDSL}
+                className="flex items-center gap-2 text-slate-300 hover:text-slate-100 hover:bg-red-500/10 border border-red-500/20 hover:border-red-400/30 transition-all duration-200 rounded-lg"
+                title="Limpiar DSL guardado"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm font-medium">Limpiar</span>
+              </Button>
+              
+              <GitHubStarsButton 
+                repoUrl="https://github.com/juanalvarezPro/UpFlow-DSL"
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -65,6 +104,18 @@ export function MainLayout() {
       
       {/* Footer */}
       <Footer />
+      
+      {/* Clear DSL Confirmation Dialog */}
+      <ConfirmDialog
+        open={showClearDialog}
+        onOpenChange={setShowClearDialog}
+        onConfirm={confirmClearDSL}
+        title="Limpiar contenido DSL"
+        description="¿Estás seguro de que quieres limpiar todo el contenido guardado? Esto eliminará el DSL actual y volverá al contenido por defecto."
+        confirmText="Limpiar"
+        cancelText="Cancelar"
+        variant="destructive"
+      />
     </div>
   );
 }
