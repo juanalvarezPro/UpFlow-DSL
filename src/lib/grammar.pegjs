@@ -178,7 +178,7 @@ ScreenContent
   = (Lista / Titulo / Image / NonScreenText / InvalidOptionLine / InvalidKeywordLine)*
 
 InvalidOptionLine
-  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
+  = !"Image" !"Titul" !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
 
 // Detectar palabras clave mal escritas usando patrones similares
 InvalidKeywordLine
