@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Button } from './button';
 import { toast } from 'sonner';
 import { useR2ImageManager } from '@/hooks/useR2ImageManager';
@@ -26,9 +27,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, onCance
         return;
       }
 
-      // Validar tamaño (máximo 5MB para R2)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('La imagen debe ser menor a 5MB');
+      // Validar formato (solo PNG y JPEG)
+      const allowedTypes = ['image/png', 'image/jpeg'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Solo se permiten archivos PNG y JPEG');
+        return;
+      }
+
+      // Validar tamaño (máximo 300KB)
+      if (file.size > 300 * 1024) {
+        toast.error('La imagen debe ser menor a 300KB');
         return;
       }
 
@@ -85,7 +93,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, onCance
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg"
                 onChange={handleFileSelect}
                 className="hidden"
                 id="image-upload"
@@ -103,7 +111,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, onCance
                   Haz clic para seleccionar una imagen
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  PNG, JPG, GIF hasta 5MB
+                  PNG, JPEG hasta 300KB
                 </p>
               </label>
             </div>
@@ -113,9 +121,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, onCance
             <div className="text-center">
               <p className="text-sm text-slate-300 mb-2">Vista previa:</p>
               <div className="border border-blue-500/20 rounded-lg p-2 inline-block glass-subtle relative">
-                <img
+                <Image
                   src={preview}
                   alt="Preview"
+                  width={200}
+                  height={128}
                   className="max-h-32 max-w-full object-contain rounded"
                 />
                 {isLoading && (

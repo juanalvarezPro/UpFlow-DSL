@@ -24,16 +24,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validar tipo de archivo (permitir texto para testing)
-    if (!file.type.startsWith('image/') && !file.type.startsWith('text/')) {
+    // Validar tipo de archivo (solo imágenes PNG y JPEG)
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
       console.log('❌ Invalid file type:', file.type);
-      return NextResponse.json({ error: 'File must be an image or text' }, { status: 400 });
+      return NextResponse.json({ error: 'Only PNG and JPEG images are allowed' }, { status: 400 });
     }
 
-    // Validar tamaño (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validar tamaño (máximo 300KB)
+    if (file.size > 300 * 1024) {
       console.log('❌ File too large:', file.size);
-      return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 });
+      return NextResponse.json({ error: 'File size must be less than 300KB' }, { status: 400 });
     }
 
     // Generar ID único
