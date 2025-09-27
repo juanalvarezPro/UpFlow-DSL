@@ -287,7 +287,7 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
       </div>
 
       {/* Header del Preview */}
-      <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between relative z-50">
+      <div className="glass-strong border-b border-blue-500/20 px-4 py-3 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 rounded-full shadow-lg ${
             error || !isValid 
