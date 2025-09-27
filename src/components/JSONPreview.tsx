@@ -9,7 +9,7 @@ interface JSONPreviewProps {
 }
 
 export function JSONPreview({ data, isValid }: JSONPreviewProps) {
-  const { handleCopy, formatJSON, formatJSONWithTooltips, copied, isConverting } = useJSONPreview({ data });
+  const { handleCopy, formatJSONWithTooltips, copied, isConverting } = useJSONPreview({ data });
 
   return (
     <div className="h-full flex flex-col glass rounded-xl overflow-hidden">
@@ -28,7 +28,7 @@ export function JSONPreview({ data, isValid }: JSONPreviewProps) {
       {/* JSON Content */}
       <div className="flex-1 min-h-0 overflow-hidden">
         <div className="h-full bg-slate-950/30 p-6 overflow-auto">
-          <div className="text-sm font-mono text-slate-200 whitespace-pre-wrap leading-relaxed">
+          <div className="json-preview-container text-sm font-mono text-slate-200 whitespace-pre-wrap leading-relaxed">
             {isValid ? formatJSONWithTooltips(data) : '// Error: No se puede generar JSON válido'}
           </div>
         </div>
