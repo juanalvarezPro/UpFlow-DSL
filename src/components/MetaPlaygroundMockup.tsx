@@ -552,8 +552,13 @@ export function MetaPlaygroundMockup({ dslData, error, isValid = true }: MetaPla
                                   onChange={(e) => handleFormChange(formChild.name, e.target.value)}
                                 >
                                   <option value="">Seleccionar...</option>
-                                  {options.map((option: { id: string; title: string }, optIndex: number) => (
-                                    <option key={optIndex} value={option.id}>
+                                  {options.map((option: { id: string; title: string; enabled?: boolean }, optIndex: number) => (
+                                    <option 
+                                      key={optIndex} 
+                                      value={option.id}
+                                      disabled={option.enabled === false}
+                                      style={option.enabled === false ? { color: '#9ca3af', fontStyle: 'italic' } : {}}
+                                    >
                                       {option.title}
                                     </option>
                                   ))}
