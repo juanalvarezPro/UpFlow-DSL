@@ -98,10 +98,10 @@ export function suggestions({ range, monaco }: { range: monaco.Range; monaco: ty
     {
       label: Keywords.Imagen,
       kind: monaco.languages.CompletionItemKind.Keyword,
-      insertText: '[IMAGEN: "${1:archivo.png}"]',
+      insertText: Keywords.Imagen + ': "${1:base64}" ${2:150}',
       insertTextRules:
         monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-      documentation: "Insert a image",
+      documentation: "Insert an image with base64 data",
       range,
       sortText: "11",
     },
