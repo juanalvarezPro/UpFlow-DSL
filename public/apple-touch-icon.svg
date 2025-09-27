@@ -1,0 +1,51 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1D4ED8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fondo con esquinas redondeadas para iOS -->
+  <rect x="0" y="0" width="180" height="180" rx="40" ry="40" fill="url(#bgGradient)"/>
+  
+  <!-- Flujos principales -->
+  <path d="M45 135 Q67.5 101.25 90 67.5 Q112.5 33.75 135 45" stroke="url(#flowGradient)" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M56.25 146.25 Q78.75 112.5 101.25 78.75 Q123.75 45 146.25 56.25" stroke="url(#flowGradient)" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M67.5 157.5 Q90 123.75 112.5 90 Q135 56.25 157.5 67.5" stroke="url(#flowGradient)" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+  
+  <!-- Puntos de conexión -->
+  <circle cx="45" cy="135" r="9" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="56.25" cy="146.25" r="9" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="67.5" cy="157.5" r="9" fill="#FFFFFF" filter="url(#glow)"/>
+  
+  <circle cx="90" cy="67.5" r="6" fill="#E0E7FF" filter="url(#glow)"/>
+  <circle cx="101.25" cy="78.75" r="6" fill="#E0E7FF" filter="url(#glow)"/>
+  <circle cx="112.5" cy="90" r="6" fill="#E0E7FF" filter="url(#glow)"/>
+  
+  <circle cx="135" cy="45" r="6" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="146.25" cy="56.25" r="6" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="157.5" cy="67.5" r="6" fill="#FFFFFF" filter="url(#glow)"/>
+  
+  <!-- Flecha hacia arriba prominente -->
+  <path d="M90 22.5 L67.5 45 L112.5 45 Z" fill="#FFFFFF" filter="url(#glow)"/>
+  <path d="M90 22.5 L67.5 45 L112.5 45 Z" fill="#3B82F6" opacity="0.3"/>
+  
+  <!-- Elementos decorativos adicionales -->
+  <circle cx="30" cy="30" r="6" fill="#E0E7FF" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="150" cy="30" r="6" fill="#E0E7FF" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="30" cy="150" r="4" fill="#FFFFFF" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="150" cy="150" r="4" fill="#FFFFFF" opacity="0.6" filter="url(#glow)"/>
+</svg>

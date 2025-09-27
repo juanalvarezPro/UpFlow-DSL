@@ -1,0 +1,125 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Elementos decorativos de fondo -->
+  <circle cx="200" cy="150" r="100" fill="#1E40AF" opacity="0.1"/>
+  <circle cx="1000" cy="480" r="80" fill="#3B82F6" opacity="0.1"/>
+  <circle cx="1100" cy="100" r="60" fill="#60A5FA" opacity="0.1"/>
+  
+  <!-- Logo principal -->
+  <g transform="translate(100, 150)">
+    <!-- Círculo de fondo del logo -->
+    <circle cx="100" cy="100" r="80" fill="url(#accentGradient)" filter="url(#glow)"/>
+    
+    <!-- Flujos del logo -->
+    <path d="M40 140 Q70 100 100 60 Q130 20 160 40" stroke="url(#flowGradient)" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+    <path d="M50 150 Q80 110 110 70 Q140 30 170 50" stroke="url(#flowGradient)" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+    <path d="M60 160 Q90 120 120 80 Q150 40 180 60" stroke="url(#flowGradient)" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+    
+    <!-- Puntos de conexión -->
+    <circle cx="40" cy="140" r="6" fill="#60A5FA" filter="url(#glow)"/>
+    <circle cx="50" cy="150" r="6" fill="#60A5FA" filter="url(#glow)"/>
+    <circle cx="60" cy="160" r="6" fill="#60A5FA" filter="url(#glow)"/>
+    
+    <circle cx="100" cy="60" r="4" fill="#93C5FD" filter="url(#glow)"/>
+    <circle cx="110" cy="70" r="4" fill="#93C5FD" filter="url(#glow)"/>
+    <circle cx="120" cy="80" r="4" fill="#93C5FD" filter="url(#glow)"/>
+    
+    <circle cx="160" cy="40" r="3" fill="#DBEAFE" filter="url(#glow)"/>
+    <circle cx="170" cy="50" r="3" fill="#DBEAFE" filter="url(#glow)"/>
+    <circle cx="180" cy="60" r="3" fill="#DBEAFE" filter="url(#glow)"/>
+    
+    <!-- Flecha hacia arriba -->
+    <path d="M100 20 L90 35 L110 35 Z" fill="#FFFFFF" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Título principal -->
+  <text x="300" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#FFFFFF">
+    UpFLows
+  </text>
+  
+  <!-- Subtítulo -->
+  <text x="300" y="250" font-family="Arial, sans-serif" font-size="32" fill="#93C5FD">
+    Creador de Flujos de WhatsApp Business
+  </text>
+  
+  <!-- Descripción -->
+  <text x="300" y="320" font-family="Arial, sans-serif" font-size="24" fill="#CBD5E1">
+    Crea flujos interactivos con sintaxis natural
+  </text>
+  <text x="300" y="360" font-family="Arial, sans-serif" font-size="24" fill="#CBD5E1">
+    Diseña conversaciones sin código
+  </text>
+  
+  <!-- Características -->
+  <g transform="translate(300, 400)">
+    <circle cx="10" cy="10" r="4" fill="#3B82F6"/>
+    <text x="25" y="15" font-family="Arial, sans-serif" font-size="18" fill="#E2E8F0">Sintaxis Natural</text>
+    
+    <circle cx="10" cy="40" r="4" fill="#3B82F6"/>
+    <text x="25" y="45" font-family="Arial, sans-serif" font-size="18" fill="#E2E8F0">Sin Código</text>
+    
+    <circle cx="10" cy="70" r="4" fill="#3B82F6"/>
+    <text x="25" y="75" font-family="Arial, sans-serif" font-size="18" fill="#E2E8F0">WhatsApp Business</text>
+  </g>
+  
+  <!-- Mockup de teléfono -->
+  <g transform="translate(800, 100)">
+    <!-- Teléfono -->
+    <rect x="0" y="0" width="200" height="400" rx="30" fill="#1E293B" stroke="#3B82F6" stroke-width="3"/>
+    
+    <!-- Pantalla -->
+    <rect x="15" y="30" width="170" height="340" rx="15" fill="#0F172A"/>
+    
+    <!-- Header WhatsApp -->
+    <rect x="15" y="30" width="170" height="50" rx="15" fill="#25D366"/>
+    <circle cx="40" cy="55" r="8" fill="#FFFFFF"/>
+    <text x="60" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">UpFLows</text>
+    
+    <!-- Contenido del flujo -->
+    <rect x="25" y="100" width="120" height="30" rx="15" fill="#3B82F6" opacity="0.8"/>
+    <text x="35" y="120" font-family="Arial, sans-serif" font-size="12" fill="#FFFFFF">Selecciona una opción</text>
+    
+    <rect x="25" y="150" width="100" height="25" rx="12" fill="#1E40AF" opacity="0.6"/>
+    <text x="35" y="167" font-family="Arial, sans-serif" font-size="11" fill="#FFFFFF">Opción 1</text>
+    
+    <rect x="25" y="185" width="100" height="25" rx="12" fill="#1E40AF" opacity="0.6"/>
+    <text x="35" y="202" font-family="Arial, sans-serif" font-size="11" fill="#FFFFFF">Opción 2</text>
+    
+    <rect x="25" y="220" width="100" height="25" rx="12" fill="#1E40AF" opacity="0.6"/>
+    <text x="35" y="237" font-family="Arial, sans-serif" font-size="11" fill="#FFFFFF">Opción 3</text>
+    
+    <!-- Botón -->
+    <rect x="25" y="280" width="150" height="40" rx="20" fill="#25D366"/>
+    <text x="75" y="305" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Continuar</text>
+  </g>
+  
+  <!-- URL -->
+  <text x="100" y="580" font-family="Arial, sans-serif" font-size="20" fill="#64748B">
+    upflows.com
+  </text>
+</svg>
