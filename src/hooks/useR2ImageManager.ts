@@ -41,11 +41,11 @@ export function useR2ImageManager() {
       const result = await response.json();
       const imageData = result.data;
       
-      toast.success('Imagen subida correctamente a R2');
+      toast.success('Imagen subida correctamente');
       return imageData.url; // Retorna la URL de R2
     } catch (error) {
       console.error('Error uploading to R2:', error);
-      toast.error('Error al subir la imagen a R2');
+      toast.error('Error al subir la imagen');
       throw error;
     } finally {
       setIsUploading(false);
