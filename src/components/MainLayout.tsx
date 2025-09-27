@@ -3,7 +3,6 @@
 import { DSLEditor } from './DSLEditor';
 import { JSONPreview } from './JSONPreview';
 import { useDSLEditor } from '@/hooks/useDSLEditor';
-import { GitHubStarsButton } from './ui/GitHubStarsButton';
 import { Footer } from './ui/Footer';
 import { AutoSaveIndicator } from './ui/AutoSaveIndicator';
 import { Button } from './ui/button';
@@ -110,10 +109,6 @@ export function MainLayout() {
                 <Trash2 className="h-4 w-4" />
                 <span className="hidden sm:inline text-sm font-medium">Limpiar</span>
               </Button>
-              
-              <GitHubStarsButton 
-                repoUrl="https://github.com/juanalvarezPro/UpFlow-DSL"
-              />
             </div>
           </div>
         </div>
