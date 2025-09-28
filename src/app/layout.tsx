@@ -61,6 +61,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: 'UpFLows - Creador de Flujos de WhatsApp Business',
+        type: 'image/png',
       },
     ],
   },
@@ -106,6 +107,28 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#3B82F6" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* Meta tags optimizadas para WhatsApp y otras redes sociales */}
+        <meta property="og:image" content="https://upflows.juanalvarez.pro/upflows-og-image.png" />
+        <meta property="og:image:secure_url" content="https://upflows.juanalvarez.pro/upflows-og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content="UpFLows - Creador de Flujos de WhatsApp Business" />
+        
+        {/* Meta tags adicionales para mejor compatibilidad */}
+        <meta name="twitter:image:alt" content="UpFLows - Creador de Flujos de WhatsApp Business" />
+        <meta name="twitter:site" content="@upflows" />
+        <meta name="twitter:domain" content="upflows.juanalvarez.pro" />
+        
+        {/* Meta tags para LinkedIn y Facebook */}
+        <meta property="fb:app_id" content="your-facebook-app-id" />
+        <meta property="og:locale" content="es_ES" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta property="og:updated_time" content={new Date().toISOString()} />
+        
+        {/* Meta tags para Pinterest */}
+        <meta name="pinterest-rich-pin" content="true" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

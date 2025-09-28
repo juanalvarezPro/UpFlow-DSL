@@ -34,7 +34,7 @@ export function MainLayout() {
     }
   };
 
-  const handleAIGenerate = (prompt: string) => {
+  const handleAIGenerate = () => {
     // Por ahora, solo mostrar un mensaje
     toast.info('Funcionalidad de IA en desarrollo. Pronto podrás generar flows automáticamente!');
     setShowAIGenerator(false);
