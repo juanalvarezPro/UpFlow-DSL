@@ -13,4 +13,10 @@ Lista fecha:
 1. 2027 01 01 - Lunes, Ene 01 2027
 2. 2027 01 02 - Martes, Ene 02 2027
 3. Opcional: 2027 01 03 - Miercoles, Ene 03 2027 
+
+IrAPantalla Confirmacion
+
+Pantalla Confirmacion:
+Titulo: Confirmacion de cita
+Su cita ha sido agendada exitosamente
 `;
