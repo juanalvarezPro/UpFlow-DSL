@@ -30,15 +30,25 @@ export function useDSLPersistence(initialValue: string = '', hasErrors: boolean 
   // Cargar DSL guardado al inicializar
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage && !isInitialized) {
-      const saved = localStorage.getItem(DSL_STORAGE_KEY);
-      if (saved && saved.trim() !== '') {
-        setDslContent(saved);
-        setLastSaved(new Date());
+      // Use requestIdleCallback for better performance
+      const loadContent = () => {
+        const saved = localStorage.getItem(DSL_STORAGE_KEY);
+        if (saved && saved.trim() !== '') {
+          setDslContent(saved);
+          setLastSaved(new Date());
+        } else {
+          // Si no hay contenido guardado, usar el valor inicial
+          setDslContent(initialValue);
+        }
+        setIsInitialized(true);
+      };
+
+      // Use requestIdleCallback if available, otherwise setTimeout
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadContent);
       } else {
-        // Si no hay contenido guardado, usar el valor inicial
-        setDslContent(initialValue);
+        setTimeout(loadContent, 0);
       }
-      setIsInitialized(true);
     }
   }, [initialValue, isInitialized]);
 

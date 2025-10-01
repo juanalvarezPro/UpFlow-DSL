@@ -3,7 +3,6 @@
 import { DSLEditor } from './DSLEditor';
 import { JSONPreview } from './JSONPreview';
 import { useDSLEditor } from '@/hooks/useDSLEditor';
-import { DEFAULT_DSL } from '@/constants/defaultDSL';
 import { Footer } from './ui/Footer';
 import { AutoSaveIndicator } from './ui/AutoSaveIndicator';
 import { Button } from './ui/button';
@@ -16,36 +15,16 @@ import { DSLEditorSkeleton } from './ui/DSLEditorSkeleton';
 import { JSONPreviewSkeleton } from './ui/JSONPreviewSkeleton';
 import { Trash2, BookOpen, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 
 export function MainLayout() {
   const { dslValue, handleDSLChange, handleFormat, jsonData, isValid, error, warnings, isAutoSaving, lastSaved, hasUnsavedChanges } = useDSLEditor();
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditorReady, setIsEditorReady] = useState(false);
   const { isOpen: isWelcomeOpen, closeModal: closeWelcomeModal } = useWelcomeModal();
 
-  // Simple loading logic: show skeleton until editor is ready
-  useEffect(() => {
-    // Fallback: hide skeleton after maximum time
-    const maxTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-    
-    return () => clearTimeout(maxTimer);
-  }, []);
 
-  // Hide skeleton when editor is ready
-  useEffect(() => {
-    if (isEditorReady) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 200); // Small delay for smooth transition
-      return () => clearTimeout(timer);
-    }
-  }, [isEditorReady]);
   
   const handleClearDSL = () => {
     setShowClearDialog(true);
@@ -158,31 +137,25 @@ export function MainLayout() {
       <main className="flex flex-col xl:flex-row p-2 sm:p-3 lg:p-4 gap-2 sm:gap-3 lg:gap-4 relative z-10 h-[calc(100vh-80px)] sm:h-[calc(100vh-90px)] lg:h-[calc(100vh-100px)]">
         {/* Editor DSL */}
         <div className="flex-1 min-h-0 w-full xl:w-1/2">
-          {isLoading ? (
-            <DSLEditorSkeleton />
-          ) : (
+          <Suspense fallback={<DSLEditorSkeleton />}>
             <DSLEditor
               value={dslValue}
               onChange={handleDSLChange}
               error={error}
               warnings={warnings}
               onFormat={handleFormat}
-              onReady={() => setIsEditorReady(true)}
             />
-          )}
+          </Suspense>
         </div>
-        
         {/* JSON Preview */}
         <div className="flex-1 min-h-0 w-full xl:w-1/2">
-          {isLoading ? (
-            <JSONPreviewSkeleton />
-          ) : (
+          <Suspense fallback={<JSONPreviewSkeleton />}>
             <JSONPreview
               data={jsonData}
               isValid={isValid}
               error={error?.message || null}
             />
-          )}
+          </Suspense>
         </div>
       </main>
       
