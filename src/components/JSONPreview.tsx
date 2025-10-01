@@ -2,7 +2,7 @@
 
 import { useJSONPreview } from '@/hooks/views/useJSON.preview';
 import { CopyButton } from './ui/CopyButton';
-import { MetaPlaygroundMockup } from './MetaPlaygroundMockup';
+import { MetaPlaygroundMockup } from './playground/MetaPlaygroundMockup';
 import { useState } from 'react';
 import { Eye, Code } from 'lucide-react';
 import { Button } from './ui/button';
