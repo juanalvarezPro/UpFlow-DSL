@@ -91,14 +91,20 @@ Screen
       const dropdowns = content.filter(c => c.type === "Dropdown");
       const texts = content.filter(c => c.type === "TextParagraph");
       const titles = content.filter(c => c.type === "TextSubheading");
+      const navigations = content.filter(c => c.type === "Navigation");
       
-      // Buscar texto de navegación en los textos
+      // Buscar navegación en elementos Navigation
       let nextScreenName = null;
-      for (const text of texts) {
-        const extractedScreen = extractNavigationScreen(text.text);
-        if (extractedScreen) {
-          nextScreenName = extractedScreen;
-          break;
+      if (navigations.length > 0) {
+        nextScreenName = makeScreenId(navigations[0].screen);
+      } else {
+        // Buscar texto de navegación en los textos (para compatibilidad con el formato anterior)
+        for (const text of texts) {
+          const extractedScreen = extractNavigationScreen(text.text);
+          if (extractedScreen) {
+            nextScreenName = extractedScreen;
+            break;
+          }
         }
       }
 
@@ -239,7 +245,7 @@ Navigation
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
 NonScreenText
-  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !"Image" !"Imagen" !"Titulo" !"Titul" line:TextLine __ {
+  = !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !"Image" !"Imagen" !"Titulo" !"Titul" !"IrAPantalla" line:TextLine __ {
       return { type: "TextParagraph", text: line };
     }
 
