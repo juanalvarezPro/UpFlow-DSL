@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 const WELCOME_MODAL_KEY = 'upflows_welcome_shown';
 
 export function useWelcomeModal() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Verificar si es la primera vez que el usuario visita la app
