@@ -4,7 +4,7 @@ export enum Keywords {
     Mostramos = 'Mostramos',
     Lista = 'Lista',
     SiEliges = 'Si eliges',
-    IrAPantalla = 'Ir a pantalla',
+    IrAPantalla = 'IrAPantalla',
     Salir = 'Salir',
     Cancelar = 'Cancelar',
     Sí = 'Sí',
