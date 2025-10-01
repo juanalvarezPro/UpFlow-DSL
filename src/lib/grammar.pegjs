@@ -191,7 +191,7 @@ Screen
   / _ "Pantalla" __ id:ScreenIdentifier !":" { error("Error de sintaxis: 'Pantalla' debe ir seguido de ':'. Ejemplo: 'Pantalla Mi Pantalla:'"); }
 
 ScreenContent
-  = (Lista / Titulo / InvalidKeywordLine / NonScreenText / Image / InvalidOptionLine)*
+  = (Lista / Titulo / Navigation / InvalidKeywordLine / NonScreenText / Image / InvalidOptionLine)*
 
 InvalidOptionLine
   = !"Image" !"Titul" !"Pantalla" !"Lista" !"List" !"Lis" !"Listas" !"Pantala" !"Pantallas" !"Opcion" !"Optional" !"Opciones" !([0-9]+ ".") [^\n]+ { error("Error de sintaxis: Las opciones deben empezar con número y punto. Ejemplo: '1. Mi opción'"); }
@@ -207,6 +207,7 @@ InvalidKeywordLine
   / "Optional" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Opciones" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Opcional'. Ejemplo: 'Opcional: mi texto'"); }
   / "Titul" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'Titulo'. Ejemplo: 'Titulo: mi titulo'"); }
+  / "IrAPantal" [^\n]* { error("Error de sintaxis: La palabra clave correcta es 'IrAPantalla'. Ejemplo: 'IrAPantalla Mi Pantalla'"); }
 
 Text
   = line:TextLine __ {
@@ -216,6 +217,7 @@ Text
   = "Titulo" __ ":" __ title:TextLine __ {
       return { type: "TextSubheading", text: title };
     }
+
 
 Image
   = "Imagen" __ ":" __ src:QuotedTitle __ height:ImageHeight? __ {
@@ -229,6 +231,11 @@ Image
 
 ImageHeight
   = [0-9]+ { return parseInt(text(), 10); }
+
+Navigation
+  = "IrAPantalla" __ screen:TextLine {
+      return { type: "Navigation", screen: screen };
+    }
 
 // Texto que no sea "Pantalla" o "Lista" al inicio de línea
 NonScreenText
