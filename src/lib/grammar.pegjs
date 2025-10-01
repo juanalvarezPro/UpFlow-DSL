@@ -15,15 +15,15 @@
   }
 
   function extractNavigationScreen(text) {
-    // Buscar patrón "Ir a pantalla [Nombre]" - requiere al menos un carácter no-espacio
-    const match = text.match(/Ir a pantalla\s+(\S+.*)/i);
+    // Buscar patrón "IrAPantalla [Nombre]" - requiere al menos un carácter no-espacio
+    const match = text.match(/IrAPantalla\s+(\S+.*)/i);
     if (match) {
       const screenName = match[1].trim();
       return makeScreenId(screenName);
     }
-    // Si encuentra "Ir a pantalla" pero sin nombre de pantalla, es un error
-    if (text.match(/Ir a pantalla\s*$/i)) {
-      error("Error: 'Ir a pantalla' debe ir seguido del nombre de la pantalla. Ejemplo: 'Ir a pantalla Mi Pantalla'");
+    // Si encuentra "IrAPantalla" pero sin nombre de pantalla, es un error
+    if (text.match(/IrAPantalla\s*$/i)) {
+      error("Error: 'IrAPantalla' debe ir seguido del nombre de la pantalla. Ejemplo: 'IrAPantalla Mi Pantalla'");
     }
     return null;
   }
